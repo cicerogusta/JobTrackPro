@@ -57,4 +57,17 @@ class ApplicationDaoTest {
         assertTrue(dao.observe("alice").first().isEmpty())
         assertTrue(requireNotNull(dao.find("alice", "1")).deleted)
     }
+    @Test fun pendingWritesSurviveClosingAndReopeningDatabase() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val name = "persistence-qa-${java.util.UUID.randomUUID()}.db"
+        var persisted = Room.databaseBuilder(context, JobTrackDatabase::class.java, name).build()
+        try {
+            persisted.applications().saveLocal(row(), "")
+            persisted.close()
+            persisted = Room.databaseBuilder(context, JobTrackDatabase::class.java, name).build()
+            assertEquals("Android", persisted.applications().find("alice", "1")?.role)
+            assertEquals(1, persisted.applications().pending("alice").size)
+            assertTrue(persisted.applications().pending("bob").isEmpty())
+        } finally { persisted.close(); context.deleteDatabase(name) }
+    }
 }
