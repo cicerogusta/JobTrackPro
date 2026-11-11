@@ -97,6 +97,12 @@ The Google services plugin runs only when app/google-services.json exists.
 No service account key or private token belongs in the application repository.
 Production resources are not created or deployed automatically by this project.
 
+If the app shows "Configure o Firebase", check that google-services.json is inside
+the app module (app/google-services.json), not only in the project root. Rebuild
+and reinstall after adding the file; an APK built earlier does not pick up the
+configuration at runtime. For a real Firebase project, build with
+-PfirebaseEmulators=false. Both root and app configuration files are ignored by Git.
+
 For local verification without a Firebase account, install Node.js and pnpm, then:
 
 ```powershell

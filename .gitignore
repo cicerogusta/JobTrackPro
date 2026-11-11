@@ -22,6 +22,7 @@ node_modules/
 firebase-debug.*
 firestore-debug.*
 app/google-services.json
+/google-services.json
 *.jks
 *.keystore
 keystore.properties

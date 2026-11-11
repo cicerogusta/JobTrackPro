@@ -22,7 +22,8 @@ See VERIFICATION.md for actual command results and QUALITY_REVIEW.md for the cod
 
 ## Remaining external/manual delivery checks
 
-- Supply app/google-services.json from the intended Firebase project.
+- The supplied Android Firebase configuration is integrated locally and startup
+  reaches login. Fresh checkouts still need their own ignored app/google-services.json.
 - Enable Email/Password, create the database and deploy/review Firestore rules.
 - Verify production authentication, password-reset delivery and synchronization on
   two real devices/accounts, including denied cross-account access.

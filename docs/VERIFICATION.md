@@ -156,3 +156,27 @@ wording adjustment. A source check confirmed 31 unit and 17 instrumentation
 annotations, the three-part naming pattern and separate-line @Test placement.
 Device instrumentation and Firebase rules tests were not rerun for this
 formatting/naming-only change. Production source and application APKs were unchanged.
+
+## Follow-up: supplied Firebase configuration
+
+The supplied google-services.json was found in the project root, while the app's
+Google services plugin checks app/google-services.json. The file had one client
+matching com.app.jobtrackpro and the required configuration fields. It was copied
+to the app module while retaining the original; both locations are ignored by Git.
+No configuration values or API keys were added to source control.
+
+Executed successfully:
+
+```powershell
+.\gradlew.bat :app:installDebug -PfirebaseEmulators=false --console=plain
+```
+
+Google services generated the app ID, API key and project-ID resources. The build
+and installation passed (280 actionable tasks, 20 executed). The existing connected
+Pixel_9_Pro emulator was launched and its UI hierarchy checked: the setup screen
+was absent and the login, email and password-recovery controls were present.
+The standard debug delivery APK and checksum were updated.
+
+This validates local SDK configuration and startup. No real account was created,
+password reset sent, rules deployed or production synchronization exercised in
+this check. Those backend acceptance checks remain pending.
