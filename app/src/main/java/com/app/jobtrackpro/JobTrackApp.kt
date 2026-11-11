@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import com.app.designsystem.R as DesignResources
 import androidx.fragment.compose.AndroidFragment
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,20 +55,22 @@ private fun AuthenticatedApp(activity: MainActivity) {
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val route = entry?.destination?.route
-    val tabs = listOf("home" to "Início", "applications" to "Candidaturas", "jobs" to "Vagas", "settings" to "Configurações")
+    val tabs = listOf(Triple("home", "Início", DesignResources.drawable.ic_home),
+        Triple("applications", "Candidaturas", DesignResources.drawable.ic_applications),
+        Triple("jobs", "Vagas", DesignResources.drawable.ic_search), Triple("settings", "Configurações", DesignResources.drawable.ic_settings))
     val isTab = tabs.any { it.first == route }
     DisposableEffect(nav, activity) {
         activity.applicationNavigation = { id -> nav.navigate("detail/$id") }
         onDispose { activity.applicationNavigation = null }
     }
     Scaffold(
-        topBar = { JobTrackTopAppBar(onBack = if (isTab) null else ({ nav.popBackStack(); Unit })) },
+        topBar = { JobTrackTopAppBar(onBack = if (isTab) null else ({ nav.popBackStack() })) },
         bottomBar = {
             if (isTab) NavigationBar {
-                tabs.forEach { (destination, label) ->
+                tabs.forEach { (destination, label, icon) ->
                     NavigationBarItem(selected = route == destination,
                         onClick = { nav.navigate(destination) { popUpTo("home") { saveState = true }; launchSingleTop = true; restoreState = true } },
-                        icon = { Text(label.take(1)) }, label = { Text(label) })
+                        icon = { Icon(painterResource(icon), contentDescription = null) }, label = { Text(label) })
                 }
             }
         }

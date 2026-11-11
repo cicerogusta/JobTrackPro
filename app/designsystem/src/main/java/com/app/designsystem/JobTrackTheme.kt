@@ -13,8 +13,18 @@ object Spacing {
     val large = 24.dp
     val touch = 48.dp
 }
-private val LightColors = lightColorScheme(primary = Color(0xFF215C43), secondary = Color(0xFF4D6358), tertiary = Color(0xFF3C6473))
-private val DarkColors = darkColorScheme(primary = Color(0xFF93D5AC), secondary = Color(0xFFB4CCBC), tertiary = Color(0xFFA4CEDF))
+private val LightColors = lightColorScheme(
+    primary = Color(0xFF215C43), onPrimary = Color.White,
+    primaryContainer = Color(0xFFA7F2C2), onPrimaryContainer = Color(0xFF002115),
+    secondary = Color(0xFF4D6358), secondaryContainer = Color(0xFFD0E8D7), onSecondaryContainer = Color(0xFF0B2015),
+    tertiary = Color(0xFF3C6473), surface = Color(0xFFF8FAF7), onSurface = Color(0xFF17201B), surfaceContainer = Color(0xFFEDEFEA),
+)
+private val DarkColors = darkColorScheme(
+    primary = Color(0xFF93D5AC), onPrimary = Color(0xFF003920),
+    primaryContainer = Color(0xFF075139), onPrimaryContainer = Color(0xFFADF2C6),
+    secondary = Color(0xFFB4CCBC), secondaryContainer = Color(0xFF354C40), onSecondaryContainer = Color(0xFFD0E8D7),
+    tertiary = Color(0xFFA4CEDF), surface = Color(0xFF101512), onSurface = Color(0xFFDEE5DD), surfaceContainer = Color(0xFF1B211D),
+)
 @Composable
 fun JobTrackTheme(mode: ThemeMode = ThemeMode.SYSTEM, content: @Composable () -> Unit) {
     val dark = mode == ThemeMode.DARK || (mode == ThemeMode.SYSTEM && isSystemInDarkTheme())

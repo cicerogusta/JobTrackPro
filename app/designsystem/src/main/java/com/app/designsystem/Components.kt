@@ -1,9 +1,13 @@
 package com.app.designsystem
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.app.core.model.*
@@ -66,12 +70,14 @@ fun JobTrackErrorState(message: String, retry: () -> Unit) {
 fun JobTrackStatusBadge(status: ApplicationStatus) { Text(status.label(), style = MaterialTheme.typography.labelLarge) }
 @Composable
 fun <T> JobTrackChoice(label: String, selected: T, options: List<T>, text: (T) -> String, onSelect: (T) -> Unit) {
-    Column {
+    Column(Modifier.selectableGroup()) {
         Text(label, style = MaterialTheme.typography.labelLarge)
         options.forEach { option ->
-            Row {
-                RadioButton(selected == option, onClick = { onSelect(option) })
-                TextButton(onClick = { onSelect(option) }, modifier = Modifier.weight(1f)) { Text(text(option)) }
+            Row(Modifier.fillMaxWidth().heightIn(min = Spacing.touch)
+                .selectable(selected == option, role = Role.RadioButton, onClick = { onSelect(option) }),
+                verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(selected == option, onClick = null)
+                Text(text(option))
             }
         }
     }

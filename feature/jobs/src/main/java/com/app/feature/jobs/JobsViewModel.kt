@@ -1,6 +1,7 @@
 package com.app.feature.jobs
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.app.core.common.UiState
 import com.app.core.model.*
@@ -11,17 +12,26 @@ import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class SaveJobState(val saving: String? = null, val saved: Set<String> = emptySet(), val failure: Failure? = null)
 @HiltViewModel
 class JobsViewModel @Inject constructor(
     private val jobs: JobsRepository, private val applications: ApplicationRepository, private val auth: AuthRepository,
+    private val savedState: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<UiState<List<JobOpening>>>(UiState.Loading)
-    val state = mutableState.asStateFlow()
+    val query = savedState.getStateFlow("query", "")
+    val state = combine(mutableState, query) { state, text ->
+        when (state) {
+            is UiState.Success -> UiState.Success(state.data.filter {
+                it.title.contains(text.trim(), true) || it.company.contains(text.trim(), true)
+            })
+            else -> state
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState.Loading)
+    fun search(text: String) { savedState["query"] = text }
     private val mutableSaveState = MutableStateFlow(SaveJobState())
     val saveState = mutableSaveState.asStateFlow()
     private var request: Job? = null
