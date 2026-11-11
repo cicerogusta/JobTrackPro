@@ -5,7 +5,6 @@
     <string name="empty_applications">Nenhuma candidatura encontrada.</string>
     <string name="retry">Tentar novamente</string>
     <string name="loading">Carregando candidaturas</string>
-    <dimen name="screen_padding">16dp</dimen>
     <string name="application_form_title">Candidatura</string>
     <string name="application_company">Empresa</string>
     <string name="application_role">Cargo</string>

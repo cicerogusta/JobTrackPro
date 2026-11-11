@@ -102,3 +102,26 @@ README.md orienta execução; ARCHITECTURE.md explica fluxo e DECISIONS.md os tr
 VERIFICATION.md registra comandos realmente executados. Pendências externas devem
 continuar visíveis; sucesso de build não comprova comportamento em produção.
 Pergunta: quais testes você adicionaria antes de distribuir o aplicativo publicamente?
+
+## Revisão de espaçamento das ações
+
+HomeScreen.kt e JobsScreen.kt agora agrupam seus cabeçalhos em Column com
+Arrangement.spacedBy(Spacing.medium). Em LazyColumn, o espaçamento entre itens não
+separa os componentes emitidos dentro de um mesmo item. Os cartões de vagas também
+separam a descrição e as ações de abrir/salvar, com 16 dp entre os botões.
+
+fragment_applications.xml usa control_spacing em dimens.xml para separar filtros,
+mensagem de estado, botão de tentar novamente e lista. As margens para alvos GONE mantêm
+um intervalo previsível quando carregamento, mensagem ou botão estão ocultos.
+A dimensão screen_padding foi movida de strings.xml para dimens.xml.
+
+A responsabilidade pelo espaçamento pertence ao layout que organiza os componentes;
+JobTrackButton continua responsável pelo botão e sua área mínima de toque. Essa
+separação preserva SRP e evita margens implícitas em todos os consumidores. Não foram
+introduzidas strings na interface nem alterações na lógica de negócio.
+
+Para testar, abra Início, Vagas e Candidaturas, role até as ações e repita com fonte
+ampliada. JobsContentTest e UiStateTest verificam a distância entre o campo de
+localização e Buscar, e entre a descrição do dashboard e Adicionar candidatura.
+Pergunta de entrevista: qual é a diferença entre contentPadding de LazyColumn,
+Arrangement.spacedBy entre itens e o espaçamento interno de um item composto?

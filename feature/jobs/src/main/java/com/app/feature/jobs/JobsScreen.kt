@@ -56,25 +56,27 @@ fun JobsContent(
         verticalArrangement = Arrangement.spacedBy(Spacing.medium),
     ) {
         item {
-            Text(
-                stringResource(R.string.jobs_heading),
-                style = MaterialTheme.typography.headlineMedium,
-            )
-            Text(stringResource(R.string.jobs_attribution))
-            JobTrackTextField(state.query, onQueryChange, stringResource(R.string.jobs_search))
-            JobTrackTextField(
-                state.location,
-                onLocationChange,
-                stringResource(R.string.jobs_location_search),
-            )
-            JobTrackButton(
-                stringResource(R.string.jobs_search_action),
-                {
-                    focus.clearFocus()
-                    keyboard?.hide()
-                    onSearch()
-                },
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.medium)) {
+                Text(
+                    stringResource(R.string.jobs_heading),
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+                Text(stringResource(R.string.jobs_attribution))
+                JobTrackTextField(state.query, onQueryChange, stringResource(R.string.jobs_search))
+                JobTrackTextField(
+                    state.location,
+                    onLocationChange,
+                    stringResource(R.string.jobs_location_search),
+                )
+                JobTrackButton(
+                    stringResource(R.string.jobs_search_action),
+                    {
+                        focus.clearFocus()
+                        keyboard?.hide()
+                        onSearch()
+                    },
+                )
+            }
         }
         state.save.failure?.let {
             item { Text(stringResource(it.messageRes()), color = MaterialTheme.colorScheme.error) }
@@ -186,14 +188,19 @@ private fun JobOpeningCard(
                 HtmlCompat.fromHtml(job.description, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
             }
         Text(description.take(600))
-        TextButton(onClick = onOpen) { Text(stringResource(R.string.jobs_open_source)) }
-        JobTrackButton(
-            text =
-                stringResource(
-                    if (job.id in save.saved) R.string.jobs_saved else R.string.jobs_save
-                ),
-            onClick = onSave,
-            enabled = save.saving == null && job.id !in save.saved,
-        )
+        Column(
+            modifier = Modifier.padding(top = Spacing.small),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium),
+        ) {
+            TextButton(onClick = onOpen) { Text(stringResource(R.string.jobs_open_source)) }
+            JobTrackButton(
+                text =
+                    stringResource(
+                        if (job.id in save.saved) R.string.jobs_saved else R.string.jobs_save
+                    ),
+                onClick = onSave,
+                enabled = save.saving == null && job.id !in save.saved,
+            )
+        }
     }
 }

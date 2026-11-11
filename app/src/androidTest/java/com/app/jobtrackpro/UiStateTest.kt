@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.app.core.common.UiState
 import com.app.core.model.*
 import com.app.designsystem.JobTrackTheme
+import com.app.designsystem.Spacing
 import com.app.feature.applications.ApplicationFormContent
 import com.app.feature.applications.FormState
 import com.app.feature.applications.validationMessageRes
@@ -32,9 +33,14 @@ class UiStateTest {
         compose
             .onNodeWithText(testString(com.app.designsystem.R.string.ds_empty_title))
             .assertIsDisplayed()
-        compose
-            .onNodeWithText(testString(com.app.home.R.string.home_add_application))
-            .performClick()
+        val descriptionBounds =
+            compose
+                .onNodeWithText(testString(com.app.home.R.string.home_description))
+                .getUnclippedBoundsInRoot()
+        val addAction =
+            compose.onNodeWithText(testString(com.app.home.R.string.home_add_application))
+        check(addAction.getUnclippedBoundsInRoot().top >= descriptionBounds.bottom + Spacing.medium)
+        addAction.performClick()
         compose.runOnIdle { check(added) }
     }
 

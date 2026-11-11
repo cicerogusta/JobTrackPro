@@ -226,3 +226,28 @@ An additional live-device check opened the authenticated app's Vagas tab after t
 update. The UI hierarchy showed Vagas no Brasil and Vagas carregadas: 20, with no
 loading or retry state. This exercised the real Retrofit/provider path on the
 existing emulator session, separately from the three fixture-based UI tests.
+
+## Follow-up: button and control spacing (2026-11-11)
+
+Home and jobs headers now use an explicit Column with 16 dp gaps inside each lazy
+item. Vacancy cards separate their open/save actions by 16 dp. The XML applications
+screen uses dimension resources for gaps between filters, state messages, retry and
+the list, including GONE-target margins. Auth, settings, application form and detail
+screens were reviewed; their parent columns already use 16 dp gaps.
+
+Executed successfully:
+
+- assembleDebug, assembleRelease, assembleDebugAndroidTest, testDebugUnitTest and
+  lintDebug with firebaseEmulators=false (spacing-validation.log).
+- Manual install -r for main/test APKs, retaining existing app data, then instrument
+  JobsContentTest and UiStateTest: OK (7 tests), including actual bounds checks for
+  the dashboard add button and search button, and the existing large-font scenario.
+- Local-emulator debug assembly, followed by the standard debug assembly. Delivery
+  APKs and SHA256SUMS.txt were refreshed.
+
+Unit-test XML reports contain 47 tests with zero failures/errors/skips. Lint passed.
+The running app was inspected on the connected API 37 emulator for the jobs header,
+applications empty state and home. XML bounds showed 48 px gaps at density 3
+(16 dp) between search/status, status/message and message/list. The retry error
+layout was reviewed statically; this check did not induce a storage failure.
+Production Firebase acceptance was not repeated for this layout-only change.

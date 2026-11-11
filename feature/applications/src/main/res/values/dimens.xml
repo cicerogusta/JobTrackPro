@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="control_spacing">16dp</dimen>
+</resources>

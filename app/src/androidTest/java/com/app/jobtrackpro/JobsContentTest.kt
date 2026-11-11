@@ -7,6 +7,7 @@ import com.app.core.common.UiState
 import com.app.core.model.*
 import com.app.designsystem.JobTrackTheme
 import com.app.designsystem.R as DesignResources
+import com.app.designsystem.Spacing
 import com.app.feature.jobs.JobsContent
 import com.app.feature.jobs.JobsUiState
 import com.app.feature.jobs.R as JobsResources
@@ -45,6 +46,15 @@ class JobsContentTest {
                 )
             }
         }
+        val locationBounds =
+            compose
+                .onNodeWithText(testString(JobsResources.string.jobs_location_search))
+                .getUnclippedBoundsInRoot()
+        val searchBounds =
+            compose
+                .onNodeWithText(testString(JobsResources.string.jobs_search_action))
+                .getUnclippedBoundsInRoot()
+        assertTrue(searchBounds.top >= locationBounds.bottom + Spacing.medium)
         compose
             .onNodeWithText(testString(JobsResources.string.jobs_search))
             .performTextInput("Android")
