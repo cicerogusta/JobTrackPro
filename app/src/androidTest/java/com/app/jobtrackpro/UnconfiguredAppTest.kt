@@ -1,0 +1,19 @@
+package com.app.jobtrackpro
+
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import com.app.core.data.BuildConfig
+import com.app.core.data.FirebaseProvider
+import org.junit.Assume.assumeFalse
+import org.junit.Rule
+import org.junit.Test
+
+class UnconfiguredAppTest {
+    @get:Rule val compose = createAndroidComposeRule<MainActivity>()
+    @Test fun missingFirebaseShowsSetupInstructions() {
+        assumeFalse(BuildConfig.FIREBASE_EMULATORS)
+        assumeFalse(FirebaseProvider(compose.activity.applicationContext).configured)
+        compose.onNodeWithText("Configure o Firebase").assertIsDisplayed()
+    }
+}

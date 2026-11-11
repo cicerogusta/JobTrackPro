@@ -1,0 +1,13 @@
+{
+  "name": "jobtrackpro-firebase-verification",
+  "private": true,
+  "scripts": {
+    "test:rules": "firebase emulators:exec --only firestore --project demo-jobtrackpro \"node --test tests/firestore.rules.test.cjs\"",
+    "emulators": "firebase emulators:start --only auth,firestore --project demo-jobtrackpro"
+  },
+  "devDependencies": {
+    "firebase-tools": "15.35.0",
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.2.0"
+  }
+}
