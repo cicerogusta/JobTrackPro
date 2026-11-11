@@ -1,0 +1,9 @@
+<resources>
+    <string name="search_hint">Pesquisar empresa, cargo ou local</string>
+    <string name="status_filter">Filtrar por status</string>
+    <string name="all_statuses">Todos os status</string>
+    <string name="empty_applications">Nenhuma candidatura encontrada.</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="loading">Carregando candidaturas</string>
+    <dimen name="screen_padding">16dp</dimen>
+</resources>
