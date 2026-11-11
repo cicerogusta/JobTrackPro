@@ -1,214 +1,300 @@
 # JobTrack Pro
 
+A native Android app for tracking job applications and discovering opportunities in Brazil.
+Built with Kotlin, Jetpack Compose and XML Views, with user-scoped local storage and
+Firebase synchronization.
+
+**Kotlin · Compose + XML · MVVM · Hilt · Room · Retrofit · Firebase**
+
 ## Project Overview
 
-A native Android application for organizing job applications, built as a professional
-Kotlin portfolio project. It combines Jetpack Compose screens with a real XML-based
-application list and uses an offline-first repository architecture.
+JobTrack Pro brings saved vacancies, submitted applications, interviews and offers
+into one place. This portfolio project demonstrates a pragmatic multimodule
+architecture, observable UI state and interoperability between Compose and Views.
 
-**Delivery status: implemented and locally verified; partially completed pending production Firebase setup and validation.**
-See [verification evidence](docs/VERIFICATION.md) and [roadmap](docs/ROADMAP.md).
-The historical [initial audit](docs/AUDIT.md) documents the original scaffold.
+The interface is in Brazilian Portuguese. Code identifiers and the main technical
+documentation are in English.
+
+> [!NOTE]
+> Product flows are implemented and locally verified. Delivery remains **partially
+> completed** pending production Firebase authorization/cross-device validation and
+> private release signing. See the [roadmap](docs/ROADMAP.md) and
+> [verification log](docs/VERIFICATION.md) for scope and evidence.
+
+[Features](#features) · [Screenshots](#screenshots) · [Setup](#setup-instructions) ·
+[Firebase](#firebase-setup) · [Tests](#running-tests) · [Build](#building-apk)
 
 ## Features
 
-- Firebase email/password registration, login, password recovery and logout.
-- Protected navigation and persistent Firebase session.
-- Dashboard with totals, interviews, offers and recent applications.
-- XML Fragment list with RecyclerView, ListAdapter, DiffUtil, search and typed status filters.
-- Compose application creation/editing with validation and retained draft state.
-- Details, status changes, HTTPS job links and confirmed deletion.
-- Room persistence scoped by authenticated UID, offline CRUD and durable pending changes.
-- Firestore transaction-based synchronization, conflict handling and deletion tombstones.
-- Brazilian vacancies via okemprego, keyword/location search, pagination and idempotent imports.
-- User profile, system/light/dark theme preferences in DataStore and synchronization feedback.
-- Loading, empty, error and retry states.
+- **Authentication:** email/password registration, login, password recovery,
+  persistent sessions, protected screens and logout.
+- **Dashboard:** application totals, interviews, offers and recent applications.
+- **Application tracking:** create, edit, inspect and delete applications; search
+  by company, role or location; filter by status.
+- **Typed statuses:** Saved, Applied, Interview, Offer and Rejected.
+- **Brazilian vacancies:** keyword and city/state search, pagination, source links
+  and saving vacancies as applications without duplicate imports.
+- **Offline data:** Room-backed CRUD for the authenticated account, with durable
+  pending changes for synchronization.
+- **Cloud synchronization:** Firestore transactions, deterministic conflict handling,
+  stable identifiers and deletion tombstones.
+- **Preferences:** basic profile, system/light/dark themes persisted with DataStore
+  and synchronization feedback.
+- **UI feedback:** loading, empty, validation, error and retry states, with shared
+  spacing and touch-target tokens.
 
 ## Tech Stack
 
-Kotlin, AndroidX, Material 3, Compose, XML/ConstraintLayout, ViewBinding, Navigation
-Compose, ViewModel, Coroutines/StateFlow, Hilt/KSP, Room, DataStore, Retrofit, OkHttp,
-Gson, Firebase Authentication and Cloud Firestore. Tests use JUnit, MockK,
-kotlinx-coroutines-test, MockWebServer, Compose Testing, Espresso and Firebase rules
-testing. Gradle Kotlin DSL and a version catalog define dependencies.
+| Area | Technologies |
+| --- | --- |
+| Language and concurrency | Kotlin, Coroutines, Flow, StateFlow |
+| UI | Jetpack Compose, Material 3, XML, ConstraintLayout, RecyclerView, ViewBinding |
+| Navigation and lifecycle | Navigation Compose, Fragments, ViewModel, lifecycle-aware collection |
+| Dependency injection | Hilt, KSP |
+| Local storage | Room, DataStore |
+| Networking | Retrofit, OkHttp, Gson |
+| Backend | Firebase Authentication, Cloud Firestore |
+| Testing | JUnit, MockK, kotlinx-coroutines-test, MockWebServer, Compose Testing, Espresso, Firebase rules tests |
+| Build | Gradle Kotlin DSL, Version Catalog, Android Lint |
+
+Versions are defined in [libs.versions.toml](gradle/libs.versions.toml).
+The app targets SDK 37 and supports Android 8.0 / API 26 and later.
 
 ## Architecture
 
-MVVM with immutable UI state, cohesive domain repository contracts and separated
-data sources. Room is the UI source of truth; remote synchronization is outside
-presentation code. See [architecture](docs/ARCHITECTURE.md) and
-[decisions and trade-offs](docs/DECISIONS.md). The
-[Portuguese mentoring guide](docs/MENTOR_NOTES.md) explains each stage.
+MVVM with immutable UI state and a unidirectional flow of events:
+
+```text
+UI (Compose / XML) → ViewModel → Repository contract
+                                      ↓
+                            Repository implementation
+                              ↙                 ↘
+                         Room / DataStore     Retrofit / Firebase
+```
+
+Room is the source of truth for application tracking. Repositories coordinate local
+and remote sources; synchronization stays outside the presentation layer. Hilt
+provides implementations behind cohesive domain contracts. Domain models do not
+depend on Android UI resources; visible labels belong to each module's resources.
+
+The application list uses a real Fragment with ConstraintLayout, RecyclerView,
+ListAdapter, DiffUtil and ViewBinding, integrated with Compose navigation.
+
+Read the [architecture guide](docs/ARCHITECTURE.md),
+[decisions and trade-offs](docs/DECISIONS.md) and
+[quality review](docs/QUALITY_REVIEW.md). The
+[Portuguese mentoring guide](docs/MENTOR_NOTES.md) explains implementation choices
+and interview discussion points.
 
 ## Module Structure
 
-```text
-app
-core:common, core:model, core:data, core:database, core:network, core:designsystem
-feature:auth, feature:home, feature:applications, feature:jobs, feature:settings
-```
+| Logical module | Responsibility |
+| --- | --- |
+| `:app` | Initialization and root navigation |
+| `:core:common` | Shared UI state and failure utilities |
+| `:core:model` | Domain models, validation and repository contracts |
+| `:core:data` | Repositories, preferences and synchronization |
+| `:core:database` | Room database, entities, DAOs and local data source |
+| `:core:network` | Retrofit service, DTOs and network mapping |
+| `:core:designsystem` | Material theme and reusable UI components |
+| `:feature:auth` | Login, registration and password recovery |
+| `:feature:home` | Compose dashboard |
+| `:feature:applications` | XML list, Compose forms and application details |
+| `:feature:jobs` | Brazilian vacancy search and imports |
+| `:feature:settings` | Profile, theme, synchronization and logout |
 
-The existing app/designsystem and app/home physical directories are mapped to their
-logical core/feature paths in settings.gradle.kts.
+`:core:designsystem` lives in `app/designsystem`; `:feature:home` lives in
+`app/home`. These physical directories are mapped in
+[settings.gradle.kts](settings.gradle.kts).
 
 ## Screenshots
 
-Real Android emulator captures using test-created application data:
+Actual captures from the running app on an Android emulator:
 
-| Compose dashboard | XML applications list |
-| --- | --- |
-| ![Dashboard](docs/screenshots/dashboard.png) | ![XML applications](docs/screenshots/applications-xml.png) |
+| Compose dashboard | Brazilian vacancy search |
+| :---: | :---: |
+| <img src="docs/screenshots/dashboard.png" alt="Dashboard with application statistics and an add application action" width="280"> | <img src="docs/screenshots/jobs-brazil.png" alt="Brazilian vacancy search with keyword and city filters and a vacancy result" width="280"> |
 
-[Landscape form capture](docs/screenshots/form-landscape.png).
-These are captures of the running app, not generated mockups.
+Additional verification captures:
+[XML application list](docs/screenshots/applications-xml.png) ·
+[Application form in landscape](docs/screenshots/form-landscape.png).
+The application data in those additional captures was created for testing.
 
 ## Setup Instructions
 
-1. Open the root project in Android Studio with Android SDK 37 installed.
-2. Use a compatible JDK for Gradle. This workspace was built using Android Studio's
-   JBR launcher and the wrapper's Java 25 daemon toolchain. Sources target Java 17.
-3. Set the SDK path through Android Studio or an ignored local.properties file.
-4. Configure Firebase as described below, or run the local emulator configuration.
-5. Sync Gradle and run the app on Android 8.0/API 26 or later.
+1. Clone the repository:
 
-PowerShell example for this machine (adjust to your installation):
+   ```bash
+   git clone https://github.com/cicerogusta/JobTrackPro.git
+   cd JobTrackPro
+   ```
 
-```powershell
-$env:JAVA_HOME = 'C:\DEV\IDES\AndroidStudio\jbr'
-$env:Path = "$env:LOCALAPPDATA\Android\Sdk\platform-tools;$env:JAVA_HOME\bin;$env:Path"
-.\gradlew.bat assembleDebug
-```
+2. Open the root directory in Android Studio and install Android SDK Platform 37.
+3. Configure the SDK through Android Studio or an ignored `local.properties` file.
+4. Set `JAVA_HOME` to a compatible JDK. The checked-in Gradle daemon criteria select
+   Java 25; Java/Kotlin source compatibility targets Java 17. Local builds were
+   verified with Android Studio's JBR launcher and the wrapper-managed daemon.
+5. Choose a Firebase setup below: your own project or local emulators.
+6. Sync Gradle, select an API 26+ device/emulator and run the `app` configuration.
 
-A build without Firebase configuration opens an explicit setup screen, not a fake
-logged-in session.
+Commands below use Windows PowerShell. On macOS/Linux, use `./gradlew` instead of
+`.\gradlew.bat`. Initial dependency/toolchain downloads require internet access.
+Node.js and pnpm are only needed for local Firebase services and rules tests.
 
 ## Firebase Setup
 
-For a real project:
+### Your Firebase project
 
-1. Create a Firebase project and register Android package com.app.jobtrackpro.
-2. Download google-services.json into app/. The file is ignored by Git.
-3. Enable Email/Password in Firebase Authentication.
+1. Register an Android app with package name `com.app.jobtrackpro` in Firebase.
+2. Download its configuration to `app/google-services.json`.
+3. Enable the Email/Password provider in Firebase Authentication.
 4. Create a Cloud Firestore database.
-5. Review and deploy firestore.rules to your project.
-6. Build, register test users and validate authorization and cross-device behavior.
+5. Review [firestore.rules](firestore.rules) and deploy them to your selected project.
+6. Build with `-PfirebaseEmulators=false`, then verify authentication, account
+   isolation and synchronization on two devices.
 
-The Google services plugin runs only when app/google-services.json exists.
-No service account key or private token belongs in the application repository.
-Production resources are not created or deployed automatically by this project.
+The Google services plugin is applied when `app/google-services.json` exists.
+Configuration files, keystores and private keys are ignored by Git. Each developer
+must provide their own configuration; backend resources are not provisioned by the build.
 
-If the app shows "Configure o Firebase", check that google-services.json is inside
-the app module (app/google-services.json), not only in the project root. Rebuild
-and reinstall after adding the file; an APK built earlier does not pick up the
-configuration at runtime. For a real Firebase project, build with
--PfirebaseEmulators=false. Both root and app configuration files are ignored by Git.
+**Seeing “Configure o Firebase”?** Place the JSON inside the `app` module, rebuild
+and reinstall. A file only in the repository root, or an APK built before adding
+it, does not configure the installed app. Builds without configuration show the
+setup screen.
 
-For local verification without a Firebase account, install Node.js and pnpm, then:
+### Local Firebase emulators
+
+To exercise authentication and synchronization without a production project:
 
 ```powershell
 pnpm install --frozen-lockfile
 pnpm emulators
-# In another terminal:
+```
+
+With an Android device connected, use another terminal:
+
+```powershell
 adb reverse tcp:9099 tcp:9099
 adb reverse tcp:8080 tcp:8080
 .\gradlew.bat :app:installDebug -PfirebaseEmulators=true
 ```
 
-This debug-only mode uses demo-jobtrackpro, Authentication on port 9099 and Firestore
-on port 8080. ADB reverse forwards device loopback (127.0.0.1) to the host.
-Run the reverse commands after connecting an emulator or USB device.
-Release builds always use normal Firebase configuration, even if the property is set.
+This debug configuration uses `demo-jobtrackpro`, Authentication on port 9099 and
+Firestore on port 8080. Repeat ADB forwarding after reconnecting the device.
+Release builds always use normal Firebase configuration.
 
 ## API Configuration
 
-The [okemprego public API](https://www.okemprego.com/pt/api) requires no API key.
-Retrofit calls https://www.okemprego.com/api/v1/jobs with country=BR on every request.
-The app sends keyword search (q), city/state search (where), newest-first ordering,
-and page/perPage parameters. Search is submitted explicitly with the search button.
+The app integrates the [okemprego API](https://www.okemprego.com/pt/api) through
+Retrofit. No API key is configured by the application.
 
-Successful pages are cached for 15 minutes by filters/page, with a 20-page memory
-bound. Pagination loads 20 vacancies at a time and removes repeated provider IDs.
-The provider caps search pagination at 200 pages; narrow the filters for larger sets.
-The published per-IP limit is 20 requests per 10 seconds; HTTP 429 has a specific
-wait-and-retry message. No API polling, scraping, private key or registration is used.
+| Request setting | App behavior |
+| --- | --- |
+| Endpoint | `https://www.okemprego.com/api/v1/jobs` |
+| Country | `country=BR` on every request; mapper also rejects other countries |
+| Search | `q` for keywords and `where` for city/state, submitted with the search button |
+| Pagination | 20 results per page, newest first, up to 200 pages per filter set |
+| Cache | Successful pages retained for 15 minutes; at most 20 pages in memory |
+| Failures | Connectivity/HTTP handling, retry and a specific HTTP 429 message |
 
-Only BR vacancies are accepted by the mapper. Remote/hybrid/on-site arrangements
-are preserved. If the provider omits the arrangement, the app asks the user to
-select it before saving. A canonical source link is available for every vacancy.
-Existing saved applications remain unchanged when switching providers. Descriptions
-are rendered as plain text, and availability depends on the external source.
+Provider IDs are deduplicated. Remote, hybrid and on-site arrangements are preserved;
+when the source omits the arrangement, users select it before saving. Descriptions
+are displayed as plain text, and every result exposes its source link.
+
+Availability and usage terms depend on the provider. See the
+[API decision record](docs/DECISIONS.md) for integration details and constraints.
 
 ## Running Tests
 
-See [test naming and formatting conventions](docs/TESTING_CONVENTIONS.md) for the
-shared JVM/instrumentation style.
+### Unit tests and static analysis
 
 ```powershell
-.\gradlew.bat testDebugUnitTest
-.\gradlew.bat lintDebug
-# Start local Firebase emulators and an Android emulator first:
+.\gradlew.bat testDebugUnitTest lintDebug -PfirebaseEmulators=false
+```
+
+Unit tests use local fakes/mocks and do not require a live API or Firebase backend.
+Follow the [test naming and formatting conventions](docs/TESTING_CONVENTIONS.md).
+
+### Android instrumentation
+
+Start the local Firebase services and connect an Android emulator/device first:
+
+```powershell
 adb reverse tcp:9099 tcp:9099
 adb reverse tcp:8080 tcp:8080
 .\gradlew.bat :core:database:connectedDebugAndroidTest :core:data:connectedDebugAndroidTest :app:connectedDebugAndroidTest -PfirebaseEmulators=true
 ```
 
-Unit tests do not require internet or Firebase. Authentication/sync instrumentation
-requires the debug emulator property and running local services; those tests are
-explicitly skipped without that property. Rules tests can start their own emulator:
+Authentication/synchronization tests require local services and the debug emulator
+property; they are skipped when that property is disabled.
+
+### Firestore rules
+
+With existing Firebase emulators stopped:
 
 ```powershell
+pnpm install --frozen-lockfile
 pnpm test:rules
 ```
 
-Stop existing Firebase emulators before running that command. With an existing
-Firestore emulator, run the test directly instead:
+Against an already-running Firestore emulator instead:
 
 ```powershell
 $env:FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080'
 node --test tests/firestore.rules.test.cjs
 ```
 
-See docs/VERIFICATION.md for executed checks and limitations.
-
-Latest Brazil jobs verification: 46 unit tests and 3 focused UI tests passed.
-Earlier full-app/Firebase instrumentation and 6 Firestore rules tests are recorded
-in docs/VERIFICATION.md. Debug and unsigned release builds passed. Lint passed
-with dependency-update notices and no errors.
+**Latest recorded validation (November 11, 2026):** 47 unit tests and 7 focused
+Compose UI tests passed, including button spacing and enlarged-font reachability.
+Debug/release builds and Lint passed. Earlier Room, Firebase integration, XML UI and
+6 Firestore rules tests are recorded separately in the
+[verification log](docs/VERIFICATION.md). These results describe local checks; production acceptance remains pending.
 
 ## Building APK
 
 ```powershell
-.\gradlew.bat :app:assembleDebug
+# Standard debug build (requires Firebase configuration for authenticated flows)
+.\gradlew.bat :app:assembleDebug -PfirebaseEmulators=false
 adb install -r app/build/outputs/apk/debug/app-debug.apk
-# Local Firebase demo variant:
+
+# Debug build targeting local Firebase emulators
 .\gradlew.bat :app:assembleDebug -PfirebaseEmulators=true
-# Unsigned release artifact:
+
+# Unsigned release build
 .\gradlew.bat :app:assembleRelease
 ```
 
-The debug APK is signed with the standard Android debug key. Release distribution
-requires your own signing configuration; keep keystores and passwords outside Git.
-A standard build still requires Firebase setup before authenticated features are usable.
+| Build | Output |
+| --- | --- |
+| Debug | `app/build/outputs/apk/debug/app-debug.apk` |
+| Unsigned release | `app/build/outputs/apk/release/app-release-unsigned.apk` |
+
+Debug builds use the Android debug key. Release distribution requires your own
+signing configuration; keep keystores and passwords outside version control.
+Local `artifacts/` delivery copies are ignored and are not included in a clone.
 
 ## Known Limitations
 
-- Production Firebase project configuration, deployed-rule checks and production
-  cross-device validation require developer-provided external resources.
-- Synchronization runs while the authenticated app is in the foreground or on a
-  manual retry; no WorkManager background schedule is implemented.
-- Conflict resolution uses device timestamps with UUID tie-breaking. Bad device
-  clocks can affect ordering; tombstones are retained indefinitely.
-- Firestore synchronization reads the full account collection, suitable for a
-  portfolio-scale dataset.
-- Brazil job search is limited to the provider catalog and a maximum of 200 pages per filter set. Live pagination may shift as postings change; IDs are deduplicated.
-- Local records are isolated by UID but are not additionally database-encrypted.
-  Logout retains records and pending changes on this device.
-- App accessibility across all assistive technologies and OEM devices needs broader
-  manual validation beyond the recorded emulator checks.
-- No fictitious screenshot, unexecuted test or production validation is claimed.
+- Production Firebase rules deployment, password-reset delivery, cross-account
+  authorization and cross-device behavior still need external acceptance checks.
+- Synchronization runs while the authenticated app is in the foreground or through
+  manual retry; background WorkManager delivery is not implemented.
+- Conflict resolution uses device timestamps with UUID tie-breaking. Incorrect
+  clocks can affect ordering; deletion tombstones are retained indefinitely.
+- Synchronization reads the full account collection, suited to portfolio-scale data.
+- Vacancy coverage depends on the provider catalog. Live pagination can shift as
+  postings change; duplicate IDs are filtered.
+- Room records are scoped by UID without additional database encryption. Logout
+  retains local records and pending changes on the device.
+- Broader TalkBack, Switch Access, OEM, tablet and release-distribution validation
+  remains pending. The current UI language is Brazilian Portuguese.
 
 ## Future Improvements
 
-Incremental sync, background delivery with WorkManager, server-authoritative conflict
-clocks, additional vacancy sources, a date picker, localization, account deletion/retention controls,
-encrypted storage where justified, CI device coverage and production distribution.
+- Incremental synchronization and WorkManager background delivery.
+- Server-authoritative conflict timestamps and retention controls.
+- Additional vacancy sources and localization.
+- Date picker and account deletion flows.
+- Expanded device coverage, continuous integration and signed release distribution.
+
+Planned and completed stages are tracked in the [roadmap](docs/ROADMAP.md).
