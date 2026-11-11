@@ -51,14 +51,16 @@ class JobsViewModelTest {
             coEvery { applications.find(any()) } answers { stored.firstOrNull { it.id == firstArg<String>() } }
             coEvery { applications.save(capture(stored)) } just Runs
             val viewModel = JobsViewModel(jobs, applications, auth)
-            val opening = JobOpening("provider-id", "Example", "Android", "Remote", true, "https://example.com/job", "")
-            viewModel.save(opening)
+            val opening = JobOpening("provider-id", "Example", "Android", "", true, "https://example.com/job", "")
+            viewModel.save(opening, "Source", "Unknown location")
             advanceUntilIdle()
-            viewModel.save(opening)
+            viewModel.save(opening, "Source", "Unknown location")
             advanceUntilIdle()
             assertEquals(1, stored.size)
             coVerify(exactly = 1) { applications.save(any()) }
             assertEquals(ApplicationStatus.SAVED, stored[0].status)
+            assertEquals("Unknown location", stored[0].location)
+            assertEquals("Source", stored[0].notes)
             assertTrue("provider-id" in viewModel.saveState.value.saved)
         } finally { Dispatchers.resetMain() }
     }

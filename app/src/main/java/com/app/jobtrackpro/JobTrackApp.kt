@@ -1,5 +1,7 @@
 package com.app.jobtrackpro
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.layout.*
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material3.*
@@ -39,8 +41,8 @@ fun JobTrackApp(viewModel: AppViewModel, activity: MainActivity) {
                 Session.Loading -> JobTrackLoading()
                 Session.Unconfigured -> Column(Modifier.safeDrawingPadding().padding(Spacing.large),
                     verticalArrangement = Arrangement.spacedBy(Spacing.medium)) {
-                    Text("Configure o Firebase", style = MaterialTheme.typography.headlineMedium)
-                    Text("Adicione app/google-services.json, habilite autenticação por e-mail e publique as regras Firestore. Consulte o README do projeto.")
+                    Text(stringResource(R.string.firebase_setup_title), style = MaterialTheme.typography.headlineMedium)
+                    Text(stringResource(R.string.firebase_setup_description))
                 }
                 Session.SignedOut -> Box(Modifier.safeDrawingPadding()) { AuthScreen(hiltViewModel()) }
                 is Session.Authenticated -> key(current.user.id) { AuthenticatedApp(activity) }
@@ -55,9 +57,9 @@ private fun AuthenticatedApp(activity: MainActivity) {
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val route = entry?.destination?.route
-    val tabs = listOf(Triple("home", "Início", DesignResources.drawable.ic_home),
-        Triple("applications", "Candidaturas", DesignResources.drawable.ic_applications),
-        Triple("jobs", "Vagas", DesignResources.drawable.ic_search), Triple("settings", "Configurações", DesignResources.drawable.ic_settings))
+    val tabs = listOf(Triple("home", stringResource(R.string.tab_home), DesignResources.drawable.ic_home),
+        Triple("applications", stringResource(R.string.tab_applications), DesignResources.drawable.ic_applications),
+        Triple("jobs", stringResource(R.string.tab_jobs), DesignResources.drawable.ic_search), Triple("settings", stringResource(R.string.tab_settings), DesignResources.drawable.ic_settings))
     val isTab = tabs.any { it.first == route }
     DisposableEffect(nav, activity) {
         activity.applicationNavigation = { id -> nav.navigate("detail/$id") }

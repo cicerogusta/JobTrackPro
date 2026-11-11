@@ -84,6 +84,20 @@ destroyed. A subsequent user cannot query another UID through repository methods
 This is logical account isolation; the database does not use additional encryption.
 Account removal and retention policies require a separate product decision.
 
+## Module-owned user-facing strings
+
+UI text lives in each module's src/main/res/values/strings.xml. Shared failure
+messages belong to core:common and status/work-mode/theme labels to core:designsystem.
+Compose resolves resources with stringResource; Fragment/RecyclerView code uses
+getString. Form validation returns a set of invalid domain fields; the applications
+feature maps those fields to resource IDs. Domain validation never depends on R,
+Context or a translated sentence. Counters/details use positional format arguments.
+Localized fallback location and provider notes are resolved by the jobs feature
+before saving; network DTOs retain an empty location rather than inventing UI text.
+Existing user-entered content, protocol values, routes and persistence keys remain
+data/identifiers. UI tests resolve labels from resources instead of assuming literal
+Portuguese strings. Display timestamps follow the current configuration locale.
+
 ## Verification policy
 
 Unit tests use mocks/fakes and MockWebServer without internet. Real API availability

@@ -7,6 +7,7 @@ import com.app.core.model.*
 import com.app.designsystem.JobTrackTheme
 import com.app.feature.applications.ApplicationFormContent
 import com.app.feature.applications.FormState
+import com.app.feature.applications.validationMessageRes
 import com.app.home.HomeContent
 import com.app.home.HomeData
 import org.junit.Rule
@@ -17,22 +18,22 @@ class UiStateTest {
     @Test fun dashboardEmptyStateHasAddAction() {
         var added = false
         compose.setContent { JobTrackTheme { HomeContent(UiState.Success(HomeData(DashboardStats(0,0,0,0), emptyList())), { added = true }, {}, {}) } }
-        compose.onNodeWithText("Nenhuma candidatura ainda").assertIsDisplayed()
-        compose.onNodeWithText("Adicionar candidatura").performClick()
+        compose.onNodeWithText(testString(com.app.designsystem.R.string.ds_empty_title)).assertIsDisplayed()
+        compose.onNodeWithText(testString(com.app.home.R.string.home_add_application)).performClick()
         compose.runOnIdle { check(added) }
     }
     @Test fun dashboardErrorCanRetry() {
         var retried = false
         compose.setContent { JobTrackTheme { HomeContent(UiState.Error(Failure.STORAGE), {}, {}, { retried = true }) } }
-        compose.onNodeWithText("Não foi possível acessar os dados locais.").assertIsDisplayed()
-        compose.onNodeWithText("Tentar novamente").performClick()
+        compose.onNodeWithText(testString(com.app.core.common.R.string.error_storage)).assertIsDisplayed()
+        compose.onNodeWithText(testString(com.app.designsystem.R.string.ds_retry)).performClick()
         compose.runOnIdle { check(retried) }
     }
     @Test fun formShowsFieldValidation() {
         val errors = ApplicationValidator.validate(ApplicationDraft())
         compose.setContent { JobTrackTheme { ApplicationFormContent(FormState(errors = errors), {}, {}, {}) } }
-        compose.onNodeWithText(requireNotNull(errors[ApplicationField.COMPANY])).assertIsDisplayed()
-        compose.onNodeWithText(requireNotNull(errors[ApplicationField.ROLE])).assertIsDisplayed()
+        compose.onNodeWithText(androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext.getString(ApplicationField.COMPANY.validationMessageRes())).assertIsDisplayed()
+        compose.onNodeWithText(androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext.getString(ApplicationField.ROLE.validationMessageRes())).assertIsDisplayed()
     }
     @Test fun largeFontsKeepDashboardActionReachable() {
         compose.setContent {
@@ -41,7 +42,7 @@ class UiStateTest {
                 androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(density.density, 1.5f)
             ) { JobTrackTheme { HomeContent(UiState.Success(HomeData(DashboardStats(0,0,0,0), emptyList())), {}, {}, {}) } }
         }
-        compose.onNodeWithText("Adicionar candidatura").performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText("Nenhuma candidatura ainda").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText(testString(com.app.home.R.string.home_add_application)).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText(testString(com.app.designsystem.R.string.ds_empty_title)).performScrollTo().assertIsDisplayed()
     }
 }

@@ -7,15 +7,15 @@ sealed interface UiState<out T> {
     data class Success<T>(val data: T) : UiState<T>
     data class Error(val failure: Failure) : UiState<Nothing>
 }
-fun Failure.userMessage(): String = when (this) {
-    Failure.NETWORK -> "Sem conexão. Verifique sua internet e tente novamente."
-    Failure.TIMEOUT -> "O serviço demorou para responder. Tente novamente."
-    Failure.AUTHENTICATION -> "Não foi possível autenticar. Verifique sua conta e senha."
-    Failure.VALIDATION -> "Confira os campos informados."
-    Failure.STORAGE -> "Não foi possível acessar os dados locais."
-    Failure.SERVER -> "O serviço está indisponível. Tente novamente mais tarde."
-    Failure.MALFORMED_DATA -> "O serviço retornou dados inválidos."
-    Failure.CONFIGURATION -> "O Firebase ainda não foi configurado neste aplicativo."
-    Failure.CONFLICT -> "Os dados mudaram. Atualize e tente novamente."
-    Failure.UNKNOWN -> "Não foi possível concluir a operação. Tente novamente."
+fun Failure.messageRes(): Int = when (this) {
+    Failure.NETWORK -> R.string.error_network
+    Failure.TIMEOUT -> R.string.error_timeout
+    Failure.AUTHENTICATION -> R.string.error_authentication
+    Failure.VALIDATION -> R.string.error_validation
+    Failure.STORAGE -> R.string.error_storage
+    Failure.SERVER -> R.string.error_server
+    Failure.MALFORMED_DATA -> R.string.error_malformed_data
+    Failure.CONFIGURATION -> R.string.error_configuration
+    Failure.CONFLICT -> R.string.error_conflict
+    Failure.UNKNOWN -> R.string.error_unknown
 }

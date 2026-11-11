@@ -1,0 +1,12 @@
+<resources>
+    <string name="home_heading">Seu próximo passo começa aqui</string>
+    <string name="home_description">Acompanhe suas candidaturas e oportunidades.</string>
+    <string name="home_add_application">Adicionar candidatura</string>
+    <string name="home_overview">Visão geral</string>
+    <string name="home_recent">Candidaturas recentes</string>
+    <string name="home_total">Total: %1$d</string>
+    <string name="home_applied">Enviadas: %1$d</string>
+    <string name="home_interviews">Entrevistas: %1$d</string>
+    <string name="home_offers">Ofertas: %1$d</string>
+    <string name="home_open_details">Ver detalhes de %1$s</string>
+</resources>

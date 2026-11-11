@@ -1,5 +1,7 @@
 package com.app.feature.settings
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,12 +10,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.app.core.common.userMessage
+import com.app.core.common.messageRes
 import com.app.core.model.*
 import com.app.designsystem.*
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
+    val profileFallback = stringResource(R.string.settings_profile)
     val session = viewModel.session.collectAsStateWithLifecycle().value
     val theme = viewModel.theme.collectAsStateWithLifecycle().value
     val sync = viewModel.syncState.collectAsStateWithLifecycle().value
@@ -21,29 +24,29 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     var confirm by rememberSaveable { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(Spacing.medium),
         verticalArrangement = Arrangement.spacedBy(Spacing.medium)) {
-        Text("Configurações", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineMedium)
         (session as? Session.Authenticated)?.user?.let { user ->
-            JobTrackCard { Text(user.displayName.ifBlank { "Meu perfil" }); Text(user.email) }
+            JobTrackCard { Text(user.displayName.ifBlank { profileFallback }); Text(user.email) }
         }
-        JobTrackChoice("Tema", theme, ThemeMode.entries, { it.label() }, viewModel::setTheme)
-        failure?.let { Text(it.userMessage(), color = MaterialTheme.colorScheme.error) }
+        JobTrackChoice(stringResource(R.string.settings_theme), theme, ThemeMode.entries, { stringResource(it.labelRes()) }, viewModel::setTheme)
+        failure?.let { Text(stringResource(it.messageRes()), color = MaterialTheme.colorScheme.error) }
         Text(when (sync.phase) {
-            SyncPhase.IDLE -> "Aguardando sincronização."
-            SyncPhase.RUNNING -> "Sincronizando…"
-            SyncPhase.SUCCESS -> "Última sincronização concluída."
-            SyncPhase.ERROR -> sync.failure?.userMessage() ?: "Falha na sincronização."
-            SyncPhase.UNAVAILABLE -> "Entre na sua conta para sincronizar."
+            SyncPhase.IDLE -> stringResource(R.string.settings_sync_idle)
+            SyncPhase.RUNNING -> stringResource(R.string.settings_sync_running)
+            SyncPhase.SUCCESS -> stringResource(R.string.settings_sync_success)
+            SyncPhase.ERROR -> stringResource(sync.failure?.messageRes() ?: R.string.settings_sync_error)
+            SyncPhase.UNAVAILABLE -> stringResource(R.string.settings_sync_unavailable)
         })
-        JobTrackButton("Sincronizar agora", viewModel::synchronize, enabled = sync.phase != SyncPhase.RUNNING)
+        JobTrackButton(stringResource(R.string.settings_sync_now), viewModel::synchronize, enabled = sync.phase != SyncPhase.RUNNING)
         JobTrackCard {
-            Text("Sobre o JobTrack Pro", style = MaterialTheme.typography.titleMedium)
-            Text("Versão 1.0 • Organize o próximo passo da sua carreira.")
-            Text("Suas candidaturas ficam disponíveis localmente. Alterações pendentes serão sincronizadas ao retomar o aplicativo com conexão.")
+            Text(stringResource(R.string.settings_about), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.settings_about_description))
+            Text(stringResource(R.string.settings_offline_description))
         }
-        JobTrackButton("Sair da conta", { confirm = true })
+        JobTrackButton(stringResource(R.string.settings_logout), { confirm = true })
     }
-    if (confirm) AlertDialog(onDismissRequest = { confirm = false }, title = { Text("Sair da conta?") },
-        text = { Text("Alterações ainda não sincronizadas permanecem neste aparelho. Volte com a mesma conta para enviá-las.") },
-        confirmButton = { TextButton(onClick = { confirm = false; viewModel.signOut() }) { Text("Sair") } },
-        dismissButton = { TextButton(onClick = { confirm = false }) { Text("Cancelar") } })
+    if (confirm) AlertDialog(onDismissRequest = { confirm = false }, title = { Text(stringResource(R.string.settings_logout_title)) },
+        text = { Text(stringResource(R.string.settings_logout_message)) },
+        confirmButton = { TextButton(onClick = { confirm = false; viewModel.signOut() }) { Text(stringResource(R.string.settings_logout_confirm)) } },
+        dismissButton = { TextButton(onClick = { confirm = false }) { Text(stringResource(R.string.settings_cancel)) } })
 }

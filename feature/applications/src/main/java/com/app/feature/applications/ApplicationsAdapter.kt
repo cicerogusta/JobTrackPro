@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.app.core.model.JobApplication
-import com.app.designsystem.label
+import com.app.designsystem.labelRes
 import com.app.feature.applications.databinding.ItemApplicationBinding
 
 class ApplicationsAdapter(private val onOpen: (String) -> Unit) :
@@ -18,7 +18,7 @@ class ApplicationsAdapter(private val onOpen: (String) -> Unit) :
         val application = getItem(position)
         holder.binding.role.text = application.role
         holder.binding.company.text = application.company
-        holder.binding.status.text = application.status.label()
+        holder.binding.status.text = holder.binding.root.context.getString(application.status.labelRes())
         holder.binding.root.setOnClickListener { onOpen(application.id) }
     }
     private object Difference : DiffUtil.ItemCallback<JobApplication>() {

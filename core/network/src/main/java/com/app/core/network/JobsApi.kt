@@ -22,7 +22,7 @@ fun JobDto.toDomain(): JobOpening {
     val name = company?.takeIf { it.isNotBlank() } ?: throw AppException(Failure.MALFORMED_DATA)
     val role = title?.takeIf { it.isNotBlank() } ?: throw AppException(Failure.MALFORMED_DATA)
     val link = url?.takeIf(ApplicationValidator::isHttpsUrl) ?: throw AppException(Failure.MALFORMED_DATA)
-    return JobOpening(id, name, role, location.orEmpty().ifBlank { "Não informada" }, remote, link, description.orEmpty())
+    return JobOpening(id, name, role, location.orEmpty(), remote, link, description.orEmpty())
 }
 interface JobsApi {
     @GET("api/job-board-api")

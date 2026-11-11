@@ -1,0 +1,12 @@
+<resources>
+    <string name="error_network">Sem conexão. Verifique sua internet e tente novamente.</string>
+    <string name="error_timeout">O serviço demorou para responder. Tente novamente.</string>
+    <string name="error_authentication">Não foi possível autenticar. Verifique sua conta e senha.</string>
+    <string name="error_validation">Confira os campos informados.</string>
+    <string name="error_storage">Não foi possível acessar os dados locais.</string>
+    <string name="error_server">O serviço está indisponível. Tente novamente mais tarde.</string>
+    <string name="error_malformed_data">O serviço retornou dados inválidos.</string>
+    <string name="error_configuration">O Firebase ainda não foi configurado neste aplicativo.</string>
+    <string name="error_conflict">Os dados mudaram. Atualize e tente novamente.</string>
+    <string name="error_unknown">Não foi possível concluir a operação. Tente novamente.</string>
+</resources>

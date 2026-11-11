@@ -15,9 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.core.common.UiState
-import com.app.core.common.userMessage
+import com.app.core.common.messageRes
 import com.app.core.model.ApplicationStatus
-import com.app.designsystem.label
+import com.app.designsystem.labelRes
 import com.app.feature.applications.databinding.FragmentApplicationsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -40,7 +40,7 @@ class ApplicationsFragment : Fragment() {
         views.search.doAfterTextChanged { viewModel.search(it.toString()) }
         val options = listOf<ApplicationStatus?>(null) + ApplicationStatus.entries
         views.status.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
-            options.map { it?.label() ?: getString(R.string.all_statuses) })
+            options.map { it?.let { status -> getString(status.labelRes()) } ?: getString(R.string.all_statuses) })
         views.status.setSelection(options.indexOf(viewModel.currentFilter.status))
         views.status.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, selected: View?, position: Int, id: Long) { viewModel.filter(options[position]) }
@@ -54,7 +54,7 @@ class ApplicationsFragment : Fragment() {
                     views.retry.isVisible = state is UiState.Error
                     views.message.isVisible = state is UiState.Error || (state is UiState.Success && state.data.isEmpty())
                     views.message.text = when (state) {
-                        is UiState.Error -> state.failure.userMessage()
+                        is UiState.Error -> getString(state.failure.messageRes())
                         else -> getString(R.string.empty_applications)
                     }
                     rows.submitList((state as? UiState.Success)?.data ?: emptyList())

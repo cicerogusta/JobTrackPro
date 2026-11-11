@@ -10,7 +10,7 @@ class DomainTest {
         LocalDate.of(2026, 1, 1), status, "https://example.com", "", 100, 100, revision = "a")
     @Test fun requiredFieldsAreValidated() {
         val errors = ApplicationValidator.validate(ApplicationDraft(company = "", role = " ", location = ""))
-        assertTrue(errors.keys.containsAll(listOf(ApplicationField.COMPANY, ApplicationField.ROLE, ApplicationField.LOCATION)))
+        assertTrue(errors.containsAll(listOf(ApplicationField.COMPANY, ApplicationField.ROLE, ApplicationField.LOCATION)))
     }
     @Test fun dateMustBeValidAndNotInFuture() {
         val draft = ApplicationDraft("Example", "Android", "Remote")

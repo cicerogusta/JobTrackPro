@@ -1,0 +1,19 @@
+<resources>
+    <string name="ds_loading">Carregando…</string>
+    <string name="ds_empty_title">Nenhuma candidatura ainda</string>
+    <string name="ds_empty_description">Adicione uma candidatura para começar.</string>
+    <string name="ds_retry">Tentar novamente</string>
+    <string name="ds_app_name">JobTrack Pro</string>
+    <string name="ds_back">Voltar</string>
+    <string name="status_saved">Salva</string>
+    <string name="status_applied">Enviada</string>
+    <string name="status_interview">Entrevista</string>
+    <string name="status_offer">Oferta</string>
+    <string name="status_rejected">Recusada</string>
+    <string name="work_mode_remote">Remoto</string>
+    <string name="work_mode_hybrid">Híbrido</string>
+    <string name="work_mode_on_site">Presencial</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+</resources>

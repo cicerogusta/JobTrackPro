@@ -25,45 +25,45 @@ class ApplicationFlowTest {
         repositories = EntryPointAccessors.fromApplication(compose.activity.application, ApplicationDependencies::class.java)
         repositories.auth().signOut()
         withTimeout(30_000) { repositories.auth().register("ui-${UUID.randomUUID()}@example.com", "Testing123!", "Portfolio QA") }
-        compose.waitUntil(15_000) { compose.onAllNodesWithText("Adicionar candidatura").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(15_000) { compose.onAllNodesWithText(testString(com.app.home.R.string.home_add_application)).fetchSemanticsNodes().isNotEmpty() }
     }
     @Test fun composeCreateXmlSearchEditAndDelete() {
-        compose.onNodeWithText("Adicionar candidatura").performClick()
-        compose.onNodeWithText("Empresa").performTextInput("Portfolio Company")
-        compose.onNodeWithText("Cargo").performTextInput("Android Developer")
-        compose.onNodeWithText("Localização").performTextInput("São Paulo")
-        compose.onNodeWithText("Salvar candidatura").performScrollTo().performClick()
-        compose.waitUntil(15_000) { compose.onAllNodesWithText("Total: 1").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText(testString(com.app.home.R.string.home_add_application)).performClick()
+        compose.onNodeWithText(testString(R.string.application_company)).performTextInput("Portfolio Company")
+        compose.onNodeWithText(testString(R.string.application_role)).performTextInput("Android Developer")
+        compose.onNodeWithText(testString(R.string.application_location)).performTextInput("São Paulo")
+        compose.onNodeWithText(testString(R.string.application_save)).performScrollTo().performClick()
+        compose.waitUntil(15_000) { compose.onAllNodesWithText(testString(com.app.home.R.string.home_total, 1)).fetchSemanticsNodes().isNotEmpty() }
         capture("jobtrack-dashboard")
-        compose.onNodeWithText("Candidaturas").performClick()
+        compose.onNodeWithText(testString(com.app.jobtrackpro.R.string.tab_applications)).performClick()
         compose.waitForIdle()
         onView(withId(R.id.search)).perform(typeText("Android"), closeSoftKeyboard())
         capture("jobtrack-applications-xml")
         onView(withText("Android Developer")).check(matches(isDisplayed())).perform(click())
-        compose.onNodeWithText("Editar candidatura").performScrollTo().performClick()
-        compose.onNodeWithText("Cargo").performTextReplacement("Senior Android Developer")
-        compose.onNodeWithText("Salvar candidatura").performScrollTo().performClick()
+        compose.onNodeWithText(testString(R.string.application_edit)).performScrollTo().performClick()
+        compose.onNodeWithText(testString(R.string.application_role)).performTextReplacement("Senior Android Developer")
+        compose.onNodeWithText(testString(R.string.application_save)).performScrollTo().performClick()
         compose.waitUntil(15_000) { compose.onAllNodesWithText("Senior Android Developer").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("Excluir candidatura").performScrollTo().performClick()
-        compose.onNodeWithText("Excluir", useUnmergedTree = true).performClick()
+        compose.onNodeWithText(testString(R.string.application_delete)).performScrollTo().performClick()
+        compose.onNodeWithText(testString(R.string.application_delete_confirm), useUnmergedTree = true).performClick()
         compose.waitForIdle()
-        onView(withId(R.id.message)).check(matches(withText("Nenhuma candidatura encontrada.")))
+        onView(withId(R.id.message)).check(matches(withText(testString(R.string.empty_applications))))
         runBlocking { assertTrue(repositories.applications().observeApplications().first().isEmpty()) }
     }
     @Test fun settingsPersistsThemeAndLogoutProtectsRoutes() {
-        compose.onNodeWithText("Configurações").performClick()
-        compose.onNodeWithText("Escuro").performScrollTo().performClick()
-        compose.onNodeWithText("Sair da conta").performScrollTo().performClick()
-        compose.onNodeWithText("Sair", useUnmergedTree = true).performClick()
-        compose.waitUntil(15_000) { compose.onAllNodesWithText("Esqueci minha senha").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("Adicionar candidatura").assertDoesNotExist()
+        compose.onNodeWithText(testString(com.app.jobtrackpro.R.string.tab_settings)).performClick()
+        compose.onNodeWithText(testString(com.app.designsystem.R.string.theme_dark)).performScrollTo().performClick()
+        compose.onNodeWithText(testString(com.app.feature.settings.R.string.settings_logout)).performScrollTo().performClick()
+        compose.onNodeWithText(testString(com.app.feature.settings.R.string.settings_logout_confirm), useUnmergedTree = true).performClick()
+        compose.waitUntil(15_000) { compose.onAllNodesWithText(testString(com.app.feature.auth.R.string.auth_forgot_password)).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText(testString(com.app.home.R.string.home_add_application)).assertDoesNotExist()
     }
     @Test fun formRemainsUsableAfterRotation() {
-        compose.onNodeWithText("Adicionar candidatura").performClick()
-        compose.onNodeWithText("Empresa").performTextInput("Rotation QA")
+        compose.onNodeWithText(testString(com.app.home.R.string.home_add_application)).performClick()
+        compose.onNodeWithText(testString(R.string.application_company)).performTextInput("Rotation QA")
         compose.activity.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         compose.waitUntil(15_000) { compose.onAllNodesWithText("Rotation QA").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("Salvar candidatura").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText(testString(R.string.application_save)).performScrollTo().assertIsDisplayed()
         capture("jobtrack-form-landscape")
         compose.activity.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }

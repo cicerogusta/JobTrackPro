@@ -14,7 +14,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 data class FormState(
-    val draft: ApplicationDraft = ApplicationDraft(), val errors: Map<ApplicationField, String> = emptyMap(),
+    val draft: ApplicationDraft = ApplicationDraft(), val errors: Set<ApplicationField> = emptySet(),
     val loading: Boolean = false, val saving: Boolean = false, val saved: Boolean = false,
     val failure: Failure? = null, val loadFailed: Boolean = false,
 )
@@ -34,7 +34,7 @@ class ApplicationFormViewModel @Inject constructor(
     fun update(draft: ApplicationDraft) {
         if (mutableState.value.saving || mutableState.value.loading) return
         savedState["draft"] = draft
-        mutableState.value = mutableState.value.copy(draft = draft, errors = emptyMap(), failure = null)
+        mutableState.value = mutableState.value.copy(draft = draft, errors = emptySet(), failure = null)
     }
     fun load() {
         mutableState.value = mutableState.value.copy(loading = true, loadFailed = false, failure = null)

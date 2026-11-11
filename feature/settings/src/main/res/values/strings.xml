@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_title">Configurações</string>
+    <string name="settings_profile">Meu perfil</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_sync_idle">Aguardando sincronização.</string>
+    <string name="settings_sync_running">Sincronizando…</string>
+    <string name="settings_sync_success">Última sincronização concluída.</string>
+    <string name="settings_sync_error">Falha na sincronização.</string>
+    <string name="settings_sync_unavailable">Entre na sua conta para sincronizar.</string>
+    <string name="settings_sync_now">Sincronizar agora</string>
+    <string name="settings_about">Sobre o JobTrack Pro</string>
+    <string name="settings_about_description">Versão 1.0 • Organize o próximo passo da sua carreira.</string>
+    <string name="settings_offline_description">Suas candidaturas ficam disponíveis localmente. Alterações pendentes serão sincronizadas ao retomar o aplicativo com conexão.</string>
+    <string name="settings_logout">Sair da conta</string>
+    <string name="settings_logout_title">Sair da conta?</string>
+    <string name="settings_logout_message">Alterações ainda não sincronizadas permanecem neste aparelho. Volte com a mesma conta para enviá-las.</string>
+    <string name="settings_logout_confirm">Sair</string>
+    <string name="settings_cancel">Cancelar</string>
+</resources>

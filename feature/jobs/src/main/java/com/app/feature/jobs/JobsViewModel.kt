@@ -45,7 +45,7 @@ class JobsViewModel @Inject constructor(
             catch (error: Exception) { mutableState.value = UiState.Error((error as? AppException)?.failure ?: Failure.UNKNOWN) }
         }
     }
-    fun save(job: JobOpening) {
+    fun save(job: JobOpening, sourceNote: String, fallbackLocation: String) {
         if (mutableSaveState.value.saving != null) return
         mutableSaveState.value = mutableSaveState.value.copy(saving = job.id, failure = null)
         viewModelScope.launch {
@@ -54,9 +54,9 @@ class JobsViewModel @Inject constructor(
                 val id = UUID.nameUUIDFromBytes("arbeitnow:$userId:${job.id}".toByteArray(StandardCharsets.UTF_8)).toString()
                 if (applications.find(id) == null) {
                     val now = System.currentTimeMillis()
-                    applications.save(JobApplication(id, userId, job.company, job.title, job.location,
+                    applications.save(JobApplication(id, userId, job.company, job.title, job.location.ifBlank { fallbackLocation },
                         if (job.remote) WorkMode.REMOTE else WorkMode.ON_SITE, LocalDate.now(), ApplicationStatus.SAVED,
-                        job.url, "Fonte: Arbeitnow", now, now))
+                        job.url, sourceNote, now, now))
                 }
                 mutableSaveState.value = mutableSaveState.value.copy(saving = null, saved = mutableSaveState.value.saved + job.id)
             } catch (cancelled: CancellationException) { throw cancelled }

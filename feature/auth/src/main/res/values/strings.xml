@@ -1,0 +1,17 @@
+<resources>
+    <string name="auth_app_name">JobTrack Pro</string>
+    <string name="auth_login">Entrar</string>
+    <string name="auth_register_title">Criar conta</string>
+    <string name="auth_reset_title">Recuperar senha</string>
+    <string name="auth_name">Nome</string>
+    <string name="auth_email">E-mail</string>
+    <string name="auth_password">Senha</string>
+    <string name="auth_password_hint">Use uma senha com pelo menos 8 caracteres.</string>
+    <string name="auth_reset_sent">Se houver uma conta para este e-mail, você receberá as instruções.</string>
+    <string name="auth_register">Cadastrar</string>
+    <string name="auth_reset_send">Enviar recuperação</string>
+    <string name="auth_already_registered">Já tenho uma conta</string>
+    <string name="auth_create_account">Criar uma conta</string>
+    <string name="auth_back_to_login">Voltar ao login</string>
+    <string name="auth_forgot_password">Esqueci minha senha</string>
+</resources>

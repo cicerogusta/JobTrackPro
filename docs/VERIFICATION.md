@@ -113,3 +113,25 @@ Final emulator invocation: BUILD SUCCESSFUL, 653 actionable tasks, 174 executed.
 Final standard invocation: BUILD SUCCESSFUL, 815 actionable tasks, 119 executed.
 No failing tests were accepted as passed. Earlier test/build failures were corrected
 and the affected checks rerun; evidence above describes the successful final runs.
+
+## Follow-up: module string resources
+
+User-facing texts, shared labels, failure messages and validation feedback were moved
+to the owning modules' strings.xml files. Domain validation now returns typed invalid
+fields; interface tests resolve translated labels through resources. Protocol values,
+routes and persistence keys are unchanged. Display dates follow LocalConfiguration's
+locale; Lint caught and prompted correction of an initial direct Context configuration read.
+
+Executed after this refactor:
+
+```powershell
+.\gradlew.bat :app:assembleDebug testDebugUnitTest lintDebug :app:assembleDebugAndroidTest --console=plain
+.\gradlew.bat :app:assembleDebug :app:assembleRelease :app:connectedDebugAndroidTest -PfirebaseEmulators=true --console=plain
+```
+
+Both invocations passed. All 31 unit tests passed; app instrumentation passed 7 tests
+with the setup-only test intentionally skipped in emulator mode. Lint reported no
+errors (11 dependency-update notices). A production-source scan found no remaining
+literal Portuguese UI text. All three delivery APKs and their SHA-256 hashes were
+refreshed. Backend/rules test results above are from the original delivery validation;
+those suites were not rerun for this presentation-resource refactor.

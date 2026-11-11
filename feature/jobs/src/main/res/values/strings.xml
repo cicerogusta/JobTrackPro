@@ -1,0 +1,13 @@
+<resources>
+    <string name="jobs_heading">Encontre oportunidades</string>
+    <string name="jobs_attribution">Fonte: Arbeitnow • vagas principalmente na Europa</string>
+    <string name="jobs_search">Pesquisar vagas carregadas</string>
+    <string name="jobs_empty">Nenhuma vaga encontrada</string>
+    <string name="jobs_empty_description">Tente outra pesquisa.</string>
+    <string name="jobs_remote">Remoto</string>
+    <string name="jobs_on_site">Presencial</string>
+    <string name="jobs_saved">Vaga salva</string>
+    <string name="jobs_save">Salvar vaga</string>
+    <string name="jobs_location_unknown">Não informada</string>
+    <string name="jobs_source_note">Fonte: Arbeitnow</string>
+</resources>

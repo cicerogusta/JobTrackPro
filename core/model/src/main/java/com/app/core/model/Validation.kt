@@ -15,14 +15,14 @@ data class ApplicationDraft(
 ) : java.io.Serializable
 enum class ApplicationField { COMPANY, ROLE, LOCATION, DATE, URL, NOTES }
 object ApplicationValidator {
-    fun validate(draft: ApplicationDraft): Map<ApplicationField, String> = buildMap {
-        if (draft.company.isBlank() || draft.company.length > 200) put(ApplicationField.COMPANY, "Informe uma empresa com até 200 caracteres.")
-        if (draft.role.isBlank() || draft.role.length > 200) put(ApplicationField.ROLE, "Informe um cargo com até 200 caracteres.")
-        if (draft.location.isBlank() || draft.location.length > 200) put(ApplicationField.LOCATION, "Informe a localização com até 200 caracteres.")
+    fun validate(draft: ApplicationDraft): Set<ApplicationField> = buildSet {
+        if (draft.company.isBlank() || draft.company.length > 200) add(ApplicationField.COMPANY)
+        if (draft.role.isBlank() || draft.role.length > 200) add(ApplicationField.ROLE)
+        if (draft.location.isBlank() || draft.location.length > 200) add(ApplicationField.LOCATION)
         val date = try { LocalDate.parse(draft.appliedOn) } catch (_: java.time.format.DateTimeParseException) { null }
-        if (date == null || date.isAfter(LocalDate.now())) put(ApplicationField.DATE, "Use uma data válida até hoje (AAAA-MM-DD).")
-        if (draft.jobUrl.length > 2048 || (draft.jobUrl.isNotBlank() && !isHttpsUrl(draft.jobUrl))) put(ApplicationField.URL, "Informe uma URL HTTPS válida com até 2048 caracteres.")
-        if (draft.notes.length > 10000) put(ApplicationField.NOTES, "As observações devem ter até 10000 caracteres.")
+        if (date == null || date.isAfter(LocalDate.now())) add(ApplicationField.DATE)
+        if (draft.jobUrl.length > 2048 || (draft.jobUrl.isNotBlank() && !isHttpsUrl(draft.jobUrl))) add(ApplicationField.URL)
+        if (draft.notes.length > 10000) add(ApplicationField.NOTES)
     }
     fun isHttpsUrl(value: String): Boolean = try {
         val uri = URI(value)

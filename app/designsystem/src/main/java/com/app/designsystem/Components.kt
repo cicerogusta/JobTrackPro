@@ -1,5 +1,7 @@
 package com.app.designsystem
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -12,22 +14,22 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.app.core.model.*
 
-fun ApplicationStatus.label(): String = when (this) {
-    ApplicationStatus.SAVED -> "Salva"
-    ApplicationStatus.APPLIED -> "Enviada"
-    ApplicationStatus.INTERVIEW -> "Entrevista"
-    ApplicationStatus.OFFER -> "Oferta"
-    ApplicationStatus.REJECTED -> "Recusada"
+fun ApplicationStatus.labelRes(): Int = when (this) {
+    ApplicationStatus.SAVED -> R.string.status_saved
+    ApplicationStatus.APPLIED -> R.string.status_applied
+    ApplicationStatus.INTERVIEW -> R.string.status_interview
+    ApplicationStatus.OFFER -> R.string.status_offer
+    ApplicationStatus.REJECTED -> R.string.status_rejected
 }
-fun WorkMode.label(): String = when (this) {
-    WorkMode.REMOTE -> "Remoto"
-    WorkMode.HYBRID -> "Híbrido"
-    WorkMode.ON_SITE -> "Presencial"
+fun WorkMode.labelRes(): Int = when (this) {
+    WorkMode.REMOTE -> R.string.work_mode_remote
+    WorkMode.HYBRID -> R.string.work_mode_hybrid
+    WorkMode.ON_SITE -> R.string.work_mode_on_site
 }
-fun ThemeMode.label(): String = when (this) {
-    ThemeMode.SYSTEM -> "Sistema"
-    ThemeMode.LIGHT -> "Claro"
-    ThemeMode.DARK -> "Escuro"
+fun ThemeMode.labelRes(): Int = when (this) {
+    ThemeMode.SYSTEM -> R.string.theme_system
+    ThemeMode.LIGHT -> R.string.theme_light
+    ThemeMode.DARK -> R.string.theme_dark
 }
 @Composable
 fun JobTrackButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
@@ -49,11 +51,11 @@ fun JobTrackCard(modifier: Modifier = Modifier, content: @Composable ColumnScope
 fun JobTrackLoading() {
     Column(Modifier.fillMaxWidth().padding(Spacing.large)) {
         CircularProgressIndicator()
-        Text("Carregando…", Modifier.padding(top = Spacing.small))
+        Text(stringResource(R.string.ds_loading), Modifier.padding(top = Spacing.small))
     }
 }
 @Composable
-fun JobTrackEmptyState(title: String = "Nenhuma candidatura ainda", description: String = "Adicione uma candidatura para começar.") {
+fun JobTrackEmptyState(title: String = stringResource(R.string.ds_empty_title), description: String = stringResource(R.string.ds_empty_description)) {
     JobTrackCard {
         Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
         Text(description)
@@ -63,13 +65,13 @@ fun JobTrackEmptyState(title: String = "Nenhuma candidatura ainda", description:
 fun JobTrackErrorState(message: String, retry: () -> Unit) {
     JobTrackCard {
         Text(message, color = MaterialTheme.colorScheme.error)
-        JobTrackButton("Tentar novamente", retry)
+        JobTrackButton(stringResource(R.string.ds_retry), retry)
     }
 }
 @Composable
-fun JobTrackStatusBadge(status: ApplicationStatus) { Text(status.label(), style = MaterialTheme.typography.labelLarge) }
+fun JobTrackStatusBadge(status: ApplicationStatus) { Text(stringResource(status.labelRes()), style = MaterialTheme.typography.labelLarge) }
 @Composable
-fun <T> JobTrackChoice(label: String, selected: T, options: List<T>, text: (T) -> String, onSelect: (T) -> Unit) {
+fun <T> JobTrackChoice(label: String, selected: T, options: List<T>, text: @Composable (T) -> String, onSelect: (T) -> Unit) {
     Column(Modifier.selectableGroup()) {
         Text(label, style = MaterialTheme.typography.labelLarge)
         options.forEach { option ->

@@ -2,6 +2,16 @@
 
 Este documento relaciona as decisões ao código real e serve como roteiro de estudo.
 
+## Textos e recursos dos módulos
+
+Os textos visuais ficam nos strings.xml dos módulos responsáveis. Compose usa
+stringResource e as Views usam getString; rótulos compartilhados ficam no Design
+System e mensagens de falha em core:common. ApplicationValidator retorna campos
+inválidos tipados, sem mensagens ou recursos Android; ValidationMessages.kt faz a
+associação na apresentação. Formatos com valores usam argumentos posicionais.
+Os testes de interface também consultam recursos. Pergunta de entrevista: por que
+retornar uma mensagem já traduzida no ViewModel dificulta mudanças de idioma?
+
 ## Etapa 1 — Inicialização
 
 settings.gradle.kts define os módulos lógicos; libs.versions.toml centraliza versões.

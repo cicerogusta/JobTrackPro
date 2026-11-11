@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">JobTrackPro</string>
+    <string name="firebase_setup_title">Configure o Firebase</string>
+    <string name="firebase_setup_description">Adicione app/google-services.json, habilite autenticação por e-mail e publique as regras Firestore. Consulte o README do projeto.</string>
+    <string name="tab_home">Início</string>
+    <string name="tab_applications">Candidaturas</string>
+    <string name="tab_jobs">Vagas</string>
+    <string name="tab_settings">Configurações</string>
 </resources>

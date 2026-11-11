@@ -14,6 +14,6 @@ class UnconfiguredAppTest {
     @Test fun missingFirebaseShowsSetupInstructions() {
         assumeFalse(BuildConfig.FIREBASE_EMULATORS)
         assumeFalse(FirebaseProvider(compose.activity.applicationContext).configured)
-        compose.onNodeWithText("Configure o Firebase").assertIsDisplayed()
+        compose.onNodeWithText(testString(R.string.firebase_setup_title)).assertIsDisplayed()
     }
 }
