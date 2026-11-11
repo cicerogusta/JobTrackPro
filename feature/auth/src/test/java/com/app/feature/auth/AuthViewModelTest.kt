@@ -9,11 +9,14 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthViewModelTest {
-    @Test fun loginFailureIsVisibleAndRetrySucceeds() = runTest {
+    @Test
+    fun submit_loginFailsThenSucceeds_exposesErrorAndClearsItAfterRetry() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {
             val repository = mockk<AuthRepository>()
-            coEvery { repository.signIn(any(), any()) } throws AppException(Failure.AUTHENTICATION) andThen Unit
+            coEvery { repository.signIn(any(), any()) } throws
+                AppException(Failure.AUTHENTICATION) andThen
+                Unit
             val viewModel = AuthViewModel(repository)
             viewModel.submit(AuthMode.LOGIN, "person@example.com", "password123", "")
             advanceUntilIdle()
@@ -22,9 +25,13 @@ class AuthViewModelTest {
             viewModel.submit(AuthMode.LOGIN, "person@example.com", "password123", "")
             advanceUntilIdle()
             assertNull(viewModel.state.value.failure)
-        } finally { Dispatchers.resetMain() }
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
-    @Test fun resetHasExplicitSuccessFeedback() = runTest {
+
+    @Test
+    fun submit_passwordResetSucceeds_exposesConfirmation() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {
             val repository = mockk<AuthRepository>()
@@ -34,6 +41,8 @@ class AuthViewModelTest {
             advanceUntilIdle()
             assertTrue(viewModel.state.value.resetSent)
             coVerify { repository.resetPassword("person@example.com") }
-        } finally { Dispatchers.resetMain() }
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 }

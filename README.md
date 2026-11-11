@@ -126,6 +126,9 @@ consulted documentation; recheck terms before public/commercial distribution.
 
 ## Running Tests
 
+See [test naming and formatting conventions](docs/TESTING_CONVENTIONS.md) for the
+shared JVM/instrumentation style.
+
 ```powershell
 .\gradlew.bat testDebugUnitTest
 .\gradlew.bat lintDebug

@@ -10,12 +10,15 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class JobsViewModelTest {
-    @Test fun searchIsCaseInsensitiveAndRetainsLoadedJobs() = runTest {
+    @Test
+    fun search_mixedCaseQuery_filtersAndRestoresLoadedJobs() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {
             val jobs = mockk<JobsRepository>()
-            val opening = JobOpening("1", "Example", "Android", "Remote", true, "https://example.com", "")
-            coEvery { jobs.getJobs() } returns listOf(opening, opening.copy(id = "2", title = "Designer"))
+            val opening =
+                JobOpening("1", "Example", "Android", "Remote", true, "https://example.com", "")
+            coEvery { jobs.getJobs() } returns
+                listOf(opening, opening.copy(id = "2", title = "Designer"))
             val viewModel = JobsViewModel(jobs, mockk(), mockk())
             advanceUntilIdle()
             viewModel.search(" android ")
@@ -24,9 +27,13 @@ class JobsViewModelTest {
             viewModel.search("")
             advanceUntilIdle()
             assertEquals(2, (viewModel.state.value as UiState.Success).data.size)
-        } finally { Dispatchers.resetMain() }
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
-    @Test fun networkFailureRetriesAndEmptyResponseIsSuccess() = runTest {
+
+    @Test
+    fun retry_networkFailureThenEmptyResponse_emitsErrorThenEmptySuccess() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {
             val jobs = mockk<JobsRepository>()
@@ -37,9 +44,13 @@ class JobsViewModelTest {
             viewModel.retry()
             advanceUntilIdle()
             assertEquals(UiState.Success(emptyList<JobOpening>()), viewModel.state.value)
-        } finally { Dispatchers.resetMain() }
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
-    @Test fun repeatedJobImportUsesSameStableIdentifier() = runTest {
+
+    @Test
+    fun save_sameJobImportedTwice_createsOneApplicationWithFallbackMetadata() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {
             val jobs = mockk<JobsRepository>()
@@ -48,10 +59,22 @@ class JobsViewModelTest {
             val auth = mockk<AuthRepository>()
             every { auth.requireUserId() } returns "alice"
             val stored = mutableListOf<JobApplication>()
-            coEvery { applications.find(any()) } answers { stored.firstOrNull { it.id == firstArg<String>() } }
+            coEvery { applications.find(any()) } answers
+                {
+                    stored.firstOrNull { it.id == firstArg<String>() }
+                }
             coEvery { applications.save(capture(stored)) } just Runs
             val viewModel = JobsViewModel(jobs, applications, auth)
-            val opening = JobOpening("provider-id", "Example", "Android", "", true, "https://example.com/job", "")
+            val opening =
+                JobOpening(
+                    "provider-id",
+                    "Example",
+                    "Android",
+                    "",
+                    true,
+                    "https://example.com/job",
+                    "",
+                )
             viewModel.save(opening, "Source", "Unknown location")
             advanceUntilIdle()
             viewModel.save(opening, "Source", "Unknown location")
@@ -62,6 +85,8 @@ class JobsViewModelTest {
             assertEquals("Unknown location", stored[0].location)
             assertEquals("Source", stored[0].notes)
             assertTrue("provider-id" in viewModel.saveState.value.saved)
-        } finally { Dispatchers.resetMain() }
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 }

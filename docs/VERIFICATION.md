@@ -135,3 +135,24 @@ errors (11 dependency-update notices). A production-source scan found no remaini
 literal Portuguese UI text. All three delivery APKs and their SHA-256 hashes were
 refreshed. Backend/rules test results above are from the original delivery validation;
 those suites were not rerun for this presentation-resource refactor.
+
+## Follow-up: Kotlin test formatting and names
+
+All 48 Kotlin test methods now use the operationOrBehavior_condition_expectedResult
+convention described in TESTING_CONVENTIONS.md. @Test, @Before and @After are on
+separate lines above their functions. ktfmt 0.64 formatted test/support files with
+four-space Kotlin style; cases and assertions were preserved.
+
+Executed:
+
+```powershell
+.\gradlew.bat testDebugUnitTest :app:assembleDebugAndroidTest :core:data:assembleDebugAndroidTest :core:database:assembleDebugAndroidTest --console=plain
+.\gradlew.bat :core:model:testDebugUnitTest --console=plain
+```
+
+The first invocation passed with 31 successful unit tests and all three
+instrumentation APKs built. The model-only suite was rerun after a final test-name
+wording adjustment. A source check confirmed 31 unit and 17 instrumentation
+annotations, the three-part naming pattern and separate-line @Test placement.
+Device instrumentation and Firebase rules tests were not rerun for this
+formatting/naming-only change. Production source and application APKs were unchanged.

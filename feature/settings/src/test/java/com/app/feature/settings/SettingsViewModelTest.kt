@@ -10,14 +10,17 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
-    @Test fun themePersistenceFailureIsVisibleAndRetryClearsIt() = runTest {
+    @Test
+    fun setTheme_persistenceFailsThenSucceeds_exposesAndClearsError() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {
             val auth = mockk<AuthRepository>()
             every { auth.session } returns MutableStateFlow(Session.SignedOut)
             val preferences = mockk<PreferencesRepository>()
             every { preferences.theme } returns MutableStateFlow(ThemeMode.SYSTEM)
-            coEvery { preferences.setTheme(ThemeMode.DARK) } throws AppException(Failure.STORAGE) andThen Unit
+            coEvery { preferences.setTheme(ThemeMode.DARK) } throws
+                AppException(Failure.STORAGE) andThen
+                Unit
             val sync = mockk<SyncRepository>()
             every { sync.state } returns MutableStateFlow(SyncState())
             val viewModel = SettingsViewModel(auth, preferences, sync)
@@ -27,6 +30,8 @@ class SettingsViewModelTest {
             viewModel.setTheme(ThemeMode.DARK)
             advanceUntilIdle()
             assertNull(viewModel.failure.value)
-        } finally { Dispatchers.resetMain() }
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 }
