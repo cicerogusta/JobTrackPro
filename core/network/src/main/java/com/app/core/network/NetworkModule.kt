@@ -19,6 +19,6 @@ object NetworkModule {
         .callTimeout(30, TimeUnit.SECONDS).build()
     @Provides @Singleton
     fun jobsApi(client: OkHttpClient): JobsApi = Retrofit.Builder()
-        .baseUrl("https://www.arbeitnow.com/").client(client)
+        .baseUrl("https://www.okemprego.com/").client(client)
         .addConverterFactory(GsonConverterFactory.create()).build().create(JobsApi::class.java)
 }

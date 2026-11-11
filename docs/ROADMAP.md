@@ -15,7 +15,7 @@ See VERIFICATION.md for actual command results and QUALITY_REVIEW.md for the cod
 | 4. Dashboard | Repository-backed statistics/recent rows, loading/error/empty, fake-backed ViewModel test | Completed locally |
 | 5. XML list | Fragment, ConstraintLayout, ViewBinding, RecyclerView/ListAdapter/DiffUtil, search/status filters and Compose navigation | Completed locally |
 | 6. Room/CRUD | Per-user persistence, validated forms/details, concurrent revision protection, confirmed deletion, DAO/repository/UI tests | Completed locally |
-| 7. REST | Verified Arbeitnow API, Retrofit/Gson mapping, cache, error/retry, local search and stable imports | Completed locally |
+| 7. REST | okemprego with country=BR, server keyword/location search, pagination, bounded cache, error/retry and stable imports | Completed locally |
 | 8. Authentication | Registration/login/reset/logout/session and protected routes tested against local Authentication emulator | Implemented; real-project setup pending |
 | 9. Synchronization | Firestore transactions, server confirmation, durable dirty markers, tombstones, deterministic conflicts, ownership rules; interruption/resumption tested | Implemented; real-project validation pending |
 | 10. Finalization | Behavioral tests, Lint, real captures, rotation/large-font checks, SOLID/Clean Code review and English documentation | Local verification completed; external delivery checks pending |

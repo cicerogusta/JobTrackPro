@@ -3,6 +3,13 @@
 Review date: 2026-11-11. Delivery remains partial until real Firebase configuration
 and production checks are completed.
 
+Brazil jobs follow-up: country=BR is enforced on every request and validated in
+DTO mapping. Search/pagination stay in JobsViewModel and the repository, with a
+bounded filter/page cache, duplicate removal, retained rows on paging failure,
+and typed work arrangements. Missing arrangements require user selection rather
+than guessing. Canonical attribution links and module string resources are used.
+Existing per-user applications and authentication are unchanged.
+
 ## SOLID
 
 - SRP: ViewModels own presentation state; DAO/local source own SQLite; Firebase

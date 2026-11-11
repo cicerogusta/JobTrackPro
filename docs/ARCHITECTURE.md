@@ -15,7 +15,7 @@ The app composes independent feature modules; features do not depend on one anot
 - feature:home: dashboard state, statistics and Compose UI.
 - feature:applications: XML list and Compose form/detail flows.
 - feature:auth: login, registration and password recovery.
-- feature:jobs: remote jobs listing, local search and saving.
+- feature:jobs: Brazilian vacancy search, submitted keyword/location filters, paged results and saving.
 - feature:settings: profile, theme persistence, sync feedback and logout.
 
 The existing physical directories app/home and app/designsystem are mapped to

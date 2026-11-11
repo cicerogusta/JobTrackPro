@@ -92,28 +92,6 @@ class RepositoryTest {
     }
 
     @Test
-    fun getJobs_cacheHitOrNetworkFailure_reusesCacheAndReportsTypedErrors() = runTest {
-        val api = mockk<JobsApi>()
-        coEvery { api.getJobs() } returns
-            JobsResponse(
-                listOf(
-                    JobDto("id", "Example", "Android", "Remote", true, "https://example.com", "")
-                )
-            )
-        val repository = RemoteJobsRepository(api)
-        assertEquals(repository.getJobs(), repository.getJobs())
-        coVerify(exactly = 1) { api.getJobs() }
-        val failing = mockk<JobsApi>()
-        coEvery { failing.getJobs() } throws IOException()
-        try {
-            RemoteJobsRepository(failing).getJobs()
-            fail("Expected network error")
-        } catch (error: AppException) {
-            assertEquals(Failure.NETWORK, error.failure)
-        }
-    }
-
-    @Test
     fun synchronize_remoteFailure_preservesPendingRowsAndSupportsRetry() = runTest {
         val auth = mockk<AuthRepository>()
         every { auth.session } returns

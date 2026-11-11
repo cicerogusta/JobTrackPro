@@ -68,6 +68,12 @@ Pergunta: como uma transação evita apagar uma edição durante o acknowledgeme
 
 JobsApi e JobDto descrevem a API; toDomain valida o payload.
 RemoteJobsRepository controla cache e JobsViewModel controla estados e salvamento.
+Para o Brasil, a API okemprego recebe country=BR, q e where. JobSearch representa
+os filtros e JobPage informa a paginação. A busca ocorre ao confirmar o botão,
+em vez de filtrar somente a primeira página em memória. O cache distingue filtros
+e páginas; uma falha ao carregar mais preserva os resultados anteriores.
+JobOpening usa WorkMode tipado e opcional: modalidade ausente exige escolha antes
+do salvamento, evitando classificar uma vaga híbrida como presencial.
 Gson foi escolhido pelo conversor oficial Retrofit; uma interface coesa permite
 trocar o provedor. MockWebServer testa o contrato sem internet.
 Pergunta: por que DTO e modelo de domínio não precisam ser a mesma classe?

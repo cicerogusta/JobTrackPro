@@ -17,5 +17,6 @@ fun Failure.messageRes(): Int = when (this) {
     Failure.MALFORMED_DATA -> R.string.error_malformed_data
     Failure.CONFIGURATION -> R.string.error_configuration
     Failure.CONFLICT -> R.string.error_conflict
+    Failure.RATE_LIMITED -> R.string.error_rate_limited
     Failure.UNKNOWN -> R.string.error_unknown
 }

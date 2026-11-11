@@ -40,24 +40,34 @@ not filtering logic buried in an adapter. Form and detail remain Compose.
 
 ## REST provider and serialization
 
-Arbeitnow publishes a free no-key API suitable for side projects:
-https://www.arbeitnow.com/blog/job-board-api
-https://documenter.getpostman.com/view/18545278/UVJbJdKh
+The original Arbeitnow integration was replaced by okemprego to serve Brazil.
+Official documentation and schema:
+- https://www.okemprego.com/pt/api
+- https://www.okemprego.com/api/v1/openapi.json
 
-The verified endpoint is https://www.arbeitnow.com/api/job-board-api.
-It returned HTTP success and job fields in this environment on 2026-11-11.
-The app uses the first page and explicitly labels search as searching loaded jobs.
-The provider focuses on Europe, not specifically Brazilian or Android vacancies.
-No fixed numeric request quota was found in the consulted provider documentation;
-the app caches successful responses for 15 minutes and does not poll the jobs API.
-Recheck provider terms before a public commercial launch. Attribution appears in
-the jobs screen and saved notes; the canonical job URL is preserved.
+Both the Brazil listing and an Android/São Paulo keyword/location request returned
+HTTP success on 2026-11-11. All requests use country=BR. The source is free and
+unauthenticated, and permits job-search/indexing uses with canonical attribution.
+It publishes a per-IP limit of 20 requests per 10 seconds and a maximum of 200 pages,
+50 results per page. The app requests 20 items, caches pages for 15 minutes (bounded
+to 20 cached pages), and submits searches only on explicit user action.
 
-Retrofit 3.0.0 uses Gson through its official converter. DTOs are validated and
-mapped into domain models. HTML descriptions are displayed as plain text and are
-never executed in a WebView. HTTPS links are validated; API failures expose retry.
-Saved imported jobs use deterministic UUIDs per user/provider job, preventing
-duplicates on repeated imports. A deleted import may be explicitly saved again.
+JobsRepository accepts JobSearch and returns JobPage. DTO mapping validates Brazil,
+HTTPS links and required fields; JobOpening carries nullable typed WorkMode so
+missing metadata is not silently treated as on-site. The UI asks for an explicit
+mode before saving such a vacancy. ViewModels coordinate submitted filters, paging,
+retry and saving; Composables render state and forward events. More-page errors
+keep already loaded rows and retry the same page. New filters restart at page one.
+
+Gson remains the official Retrofit converter. HTML is displayed as plain text.
+Each card links to its canonical okemprego page. Imported IDs use provider-prefixed
+slugs and a deterministic user/job UUID. Previously saved Arbeitnow applications
+and URLs are retained; there is no Room schema change or bulk import migration.
+
+This is a single provider's catalog, not a claim of coverage of every Brazilian
+job board. Postings can expire or be inaccurate. Page-indexed results may shift
+when new jobs arrive; the UI deduplicates IDs, and filters should be narrowed when
+the page cap is reached. Provider terms were checked before the integration.
 
 ## Firebase configuration
 

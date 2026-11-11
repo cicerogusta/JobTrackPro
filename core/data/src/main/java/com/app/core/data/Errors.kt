@@ -26,7 +26,11 @@ fun Throwable.asAppException(): AppException = when (this) {
             FirebaseFirestoreException.Code.DEADLINE_EXCEEDED -> Failure.TIMEOUT
             else -> Failure.SERVER
         }, this)
-    is HttpException -> AppException(if (code() == 401 || code() == 403) Failure.AUTHENTICATION else Failure.SERVER, this)
+    is HttpException -> AppException(when (code()) {
+        401, 403 -> Failure.AUTHENTICATION
+        429 -> Failure.RATE_LIMITED
+        else -> Failure.SERVER
+    }, this)
     is JsonParseException -> AppException(Failure.MALFORMED_DATA, this)
     is SQLException -> AppException(Failure.STORAGE, this)
     else -> AppException(Failure.UNKNOWN, this)

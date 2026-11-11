@@ -20,7 +20,7 @@ The historical [initial audit](docs/AUDIT.md) documents the original scaffold.
 - Details, status changes, HTTPS job links and confirmed deletion.
 - Room persistence scoped by authenticated UID, offline CRUD and durable pending changes.
 - Firestore transaction-based synchronization, conflict handling and deletion tombstones.
-- Arbeitnow REST jobs, search within the loaded page and idempotent job imports.
+- Brazilian vacancies via okemprego, keyword/location search, pagination and idempotent imports.
 - User profile, system/light/dark theme preferences in DataStore and synchronization feedback.
 - Loading, empty, error and retry states.
 
@@ -121,14 +121,22 @@ Release builds always use normal Firebase configuration, even if the property is
 
 ## API Configuration
 
-Arbeitnow's [documented public API](https://www.arbeitnow.com/blog/job-board-api)
-requires no API key. Retrofit calls
-https://www.arbeitnow.com/api/job-board-api over HTTPS. Gson maps the response.
+The [okemprego public API](https://www.okemprego.com/pt/api) requires no API key.
+Retrofit calls https://www.okemprego.com/api/v1/jobs with country=BR on every request.
+The app sends keyword search (q), city/state search (where), newest-first ordering,
+and page/perPage parameters. Search is submitted explicitly with the search button.
 
-The app loads the first page, caches successful responses for 15 minutes and labels
-search as searching loaded vacancies. Coverage is primarily European jobs. Provider
-attribution and canonical links are retained. No numeric quota was found in the
-consulted documentation; recheck terms before public/commercial distribution.
+Successful pages are cached for 15 minutes by filters/page, with a 20-page memory
+bound. Pagination loads 20 vacancies at a time and removes repeated provider IDs.
+The provider caps search pagination at 200 pages; narrow the filters for larger sets.
+The published per-IP limit is 20 requests per 10 seconds; HTTP 429 has a specific
+wait-and-retry message. No API polling, scraping, private key or registration is used.
+
+Only BR vacancies are accepted by the mapper. Remote/hybrid/on-site arrangements
+are preserved. If the provider omits the arrangement, the app asks the user to
+select it before saving. A canonical source link is available for every vacancy.
+Existing saved applications remain unchanged when switching providers. Descriptions
+are rendered as plain text, and availability depends on the external source.
 
 ## Running Tests
 
@@ -162,9 +170,10 @@ node --test tests/firestore.rules.test.cjs
 
 See docs/VERIFICATION.md for executed checks and limitations.
 
-Verified locally: 31 unit tests, 17 distinct instrumentation tests across the
-standard/emulator configurations, and 6 Firestore rules tests. Debug and unsigned
-release builds passed. Lint passed with dependency-update notices and no errors.
+Latest Brazil jobs verification: 46 unit tests and 3 focused UI tests passed.
+Earlier full-app/Firebase instrumentation and 6 Firestore rules tests are recorded
+in docs/VERIFICATION.md. Debug and unsigned release builds passed. Lint passed
+with dependency-update notices and no errors.
 
 ## Building APK
 
@@ -191,7 +200,7 @@ A standard build still requires Firebase setup before authenticated features are
   clocks can affect ordering; tombstones are retained indefinitely.
 - Firestore synchronization reads the full account collection, suitable for a
   portfolio-scale dataset.
-- Jobs search covers the loaded first page. API availability and content are external.
+- Brazil job search is limited to the provider catalog and a maximum of 200 pages per filter set. Live pagination may shift as postings change; IDs are deduplicated.
 - Local records are isolated by UID but are not additionally database-encrypted.
   Logout retains records and pending changes on this device.
 - App accessibility across all assistive technologies and OEM devices needs broader
@@ -201,5 +210,5 @@ A standard build still requires Firebase setup before authenticated features are
 ## Future Improvements
 
 Incremental sync, background delivery with WorkManager, server-authoritative conflict
-clocks, pagination, a date picker, localization, account deletion/retention controls,
+clocks, additional vacancy sources, a date picker, localization, account deletion/retention controls,
 encrypted storage where justified, CI device coverage and production distribution.

@@ -9,4 +9,5 @@
     <string name="error_configuration">O Firebase ainda não foi configurado neste aplicativo.</string>
     <string name="error_conflict">Os dados mudaram. Atualize e tente novamente.</string>
     <string name="error_unknown">Não foi possível concluir a operação. Tente novamente.</string>
+    <string name="error_rate_limited">Muitas buscas em pouco tempo. Aguarde alguns segundos e tente novamente.</string>
 </resources>

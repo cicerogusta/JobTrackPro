@@ -20,7 +20,8 @@ interface AuthRepository {
     fun requireUserId(): String
 }
 interface JobsRepository {
-    suspend fun getJobs(): List<JobOpening>
+    /** Searches Brazilian vacancies; page numbers start at one. */
+    suspend fun getJobs(search: JobSearch = JobSearch(), page: Int = 1): JobPage
 }
 interface PreferencesRepository {
     val theme: Flow<ThemeMode>

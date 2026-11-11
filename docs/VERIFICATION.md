@@ -4,6 +4,9 @@ Date: 2026-11-11. Tested in C:\Projetos\Android\JobTrackPro on Windows,
 with Android Studio JBR, the configured Gradle Java 25 daemon toolchain, Android SDK 37
 and Medium_Phone_API_37.0 (Android 17/API 37).
 
+Original delivery checks and subsequent changes are recorded below. The latest
+follow-up section describes the current feature-specific validation.
+
 ## Executed checks
 
 | Check | Observed result |
@@ -180,3 +183,46 @@ The standard debug delivery APK and checksum were updated.
 This validates local SDK configuration and startup. No real account was created,
 password reset sent, rules deployed or production synchronization exercised in
 this check. Those backend acceptance checks remain pending.
+
+## Follow-up: Brazil vacancy search
+
+The European-only provider was replaced with the documented okemprego API. Live
+probes on 2026-11-11 returned Brazilian vacancies for country=BR, and the combination
+q=android / where=São Paulo returned nine matching vacancies at the time checked.
+Twenty initial rows were checked for BR country, mandatory fields and HTTPS URLs;
+all passed. These observations are availability checks, not a guarantee of future
+counts or completeness of the Brazilian job market.
+
+Implemented: keyword/city/state queries submitted to the provider, 20-row pages,
+same-page retry on paging failure, ID deduplication, bounded filter/page cache,
+canonical source links, typed remote/hybrid/on-site mapping, explicit user choice
+for missing work-mode metadata and a specific HTTP 429 message. Imported provider
+IDs are namespaced; existing applications and their URLs were not migrated/deleted.
+All new UI text is in module string resources; test names follow the project convention.
+
+Executed successfully:
+
+```powershell
+.\gradlew.bat :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest testDebugUnitTest lintDebug -PfirebaseEmulators=false --console=plain
+.\gradlew.bat :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest :feature:jobs:lintDebug :app:lintDebug -PfirebaseEmulators=false --console=plain
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+adb shell am instrument -w -e class com.app.jobtrackpro.JobsContentTest com.app.jobtrackpro.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+All 46 unit tests passed. The second build verified the final keyboard/focus handling
+on search submission. Three focused UI tests passed on the connected Pixel_9_Pro
+API 37 emulator: entering filters/submitting search, loading another page and
+selecting an unknown modality before saving. They use local UI fixtures, not live
+API responses. Installation used -r to retain existing app data; authentication
+and Firestore acceptance flows were not rerun or modified in this check.
+
+Debug/release builds passed. Lint had zero errors and 11 dependency-update notices.
+The local-emulator debug variant was rebuilt, and the standard debug variant was
+restored afterward. Delivery APKs and checksums were refreshed. Source references:
+https://www.okemprego.com/pt/api and https://www.okemprego.com/api/v1/openapi.json.
+
+An additional live-device check opened the authenticated app's Vagas tab after the
+update. The UI hierarchy showed Vagas no Brasil and Vagas carregadas: 20, with no
+loading or retry state. This exercised the real Retrofit/provider path on the
+existing emulator session, separately from the three fixture-based UI tests.

@@ -35,7 +35,7 @@ data class JobOpening(
     val company: String,
     val title: String,
     val location: String,
-    val remote: Boolean,
+    val workMode: WorkMode?,
     val url: String,
     val description: String,
 )
@@ -56,7 +56,7 @@ data class ApplicationFilter(val query: String = "", val status: ApplicationStat
                 .any { it.contains(query.trim(), ignoreCase = true) }
 }
 
-enum class Failure { NETWORK, TIMEOUT, AUTHENTICATION, VALIDATION, STORAGE, SERVER, MALFORMED_DATA, CONFIGURATION, CONFLICT, UNKNOWN }
+enum class Failure { NETWORK, TIMEOUT, AUTHENTICATION, VALIDATION, STORAGE, SERVER, MALFORMED_DATA, CONFIGURATION, CONFLICT, RATE_LIMITED, UNKNOWN }
 class AppException(val failure: Failure, cause: Throwable? = null) : Exception(failure.name, cause)
 
 enum class SyncPhase { IDLE, RUNNING, SUCCESS, ERROR, UNAVAILABLE }

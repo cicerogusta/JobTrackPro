@@ -1,13 +1,22 @@
 <resources>
-    <string name="jobs_heading">Encontre oportunidades</string>
-    <string name="jobs_attribution">Fonte: Arbeitnow • vagas principalmente na Europa</string>
-    <string name="jobs_search">Pesquisar vagas carregadas</string>
+    <string name="jobs_heading">Vagas no Brasil</string>
+    <string name="jobs_attribution">Fonte: okemprego • Brasil • vagas presenciais, híbridas e remotas</string>
+    <string name="jobs_search">Cargo, habilidade ou empresa</string>
+    <string name="jobs_location_search">Cidade ou estado (opcional)</string>
+    <string name="jobs_search_action">Buscar vagas no Brasil</string>
     <string name="jobs_empty">Nenhuma vaga encontrada</string>
-    <string name="jobs_empty_description">Tente outra pesquisa.</string>
-    <string name="jobs_remote">Remoto</string>
-    <string name="jobs_on_site">Presencial</string>
+    <string name="jobs_empty_description">Nenhuma vaga no Brasil para esses filtros. Tente outro cargo ou localização.</string>
     <string name="jobs_saved">Vaga salva</string>
     <string name="jobs_save">Salvar vaga</string>
     <string name="jobs_location_unknown">Não informada</string>
-    <string name="jobs_source_note">Fonte: Arbeitnow</string>
+    <string name="jobs_source_note">Fonte: okemprego • Brasil</string>
+    <string name="jobs_load_more">Carregar mais vagas</string>
+    <string name="jobs_count">Vagas carregadas: %1$d</string>
+    <string name="jobs_open_source">Ver vaga na okemprego</string>
+    <string name="jobs_no_browser">Nenhum navegador disponível para abrir a vaga.</string>
+    <string name="jobs_mode_unknown">Modalidade não informada</string>
+    <string name="jobs_mode_title">Modalidade da candidatura</string>
+    <string name="jobs_mode_description">A fonte não informou a modalidade. Selecione uma opção para salvar.</string>
+    <string name="jobs_cancel">Cancelar</string>
+    <string name="jobs_save_confirm">Confirmar e salvar</string>
 </resources>
